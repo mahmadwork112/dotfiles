@@ -1,0 +1,7 @@
+#Ignore compiled Zsh files
+*.zwc
+
+# Ignore general cache
+.cache/
+*.log
+node_modules/

@@ -1,0 +1,136 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 40,
+    "spacing": -4,
+    "modules-left": [
+        "custom/notification",
+        "dwl/workspaces",
+        "niri/workspaces",
+        "hyprland/workspaces",
+        "dwl/window"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "network",
+        "bluetooth",
+        "pulseaudio",
+        "cpu",
+        "memory",
+        "tray",
+        "custom/power"
+    ],
+    "ext/workspaces": {
+        "format": "{icon}",
+        "on-click": "activate",
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "default": "{name}"
+        },
+        "sort-by-id": true
+    },
+    "dwl/window": {
+        "format": "{}",
+        "max-length": 50,
+        "rewrite": {
+            "(.*) — Mozilla Firefox": "🌎 $1",
+            "(.*) - kitty": "💻 $1",
+            "(.*) - Google Chrome": "🌎 $1",
+            "(.*) - Visual Studio Code": "󰨞 $1"
+        }
+    },
+    "niri/workspaces": {
+        "all-outputs": true,
+        "format": "{index}"
+    },
+    "tray": {
+        "icon-size": 18,
+        "spacing": 10
+    },
+    "clock": {
+        "format": "󰥔 {:%I:%M %p}",
+        "format-alt": "󰃭 {:%Y-%m-%d}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+        "format": "  {usage}%",
+        "interval": 2,
+        "tooltip": false
+    },
+    "memory": {
+        "format": "󰍛 {used:0.1f}G",
+        "interval": 5,
+        "tooltip-format": "RAM: {used}GiB / {total}GiB\nSwap: {swapUsed}GiB / {swapTotal}GiB"
+    },
+    "network": {
+        "format-wifi": "󰖩 {essid}",
+        "format-ethernet": "󰈀",
+        "format-linked": "󰈀 {ifname} (No IP)",
+        "format-disconnected": "󰖪 Disconnected",
+        "format-alt": "󰈀 {ipaddr}/{cidr}  ↓ {bandwidthDownBits}  ↑ {bandwidthUpBits}",
+        "tooltip": false,
+        "interval": 2,
+        "on-click-right": "alacritty --class netpala -e netpala"
+    },
+    "bluetooth": {
+        "format": " {status}",
+        "format-disabled": "󰂲",
+        "format-connected": " {device_alias}",
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "on-click-right": "alacritty --class bluepala -e bluepala"
+    },
+    "pulseaudio": {
+        "scroll-step": 5,
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{icon} {volume}%",
+        "format-muted": "󰝟 Muted",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "󱠡",
+            "headset": "󰋎",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": [
+                "󰕿",
+                "󰖀",
+                "󰕾"
+            ]
+        },
+        "on-click": "pavucontrol"
+    },
+    "custom/power": {
+        "format": "⏻",
+        "on-click": "/home/ridvan/.local/bin/powermenu.sh",
+        "tooltip": false
+    },
+    "custom/notification": {
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='#f38ba8'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='#f38ba8'><sup></sup></span>",
+            "dnd-none": "",
+            "inhibited-notification": "<span foreground='#f38ba8'><sup></sup></span>",
+            "inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client --subscribe-waybar",
+        "on-click": "swaync-client -t",
+        "escape": true,
+        "tooltip": false
+    },
+}

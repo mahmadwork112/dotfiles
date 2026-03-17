@@ -1,0 +1,75 @@
+@import "colors/colors.css";
+
+/* 1. Global Reset - No backgrounds allowed by default */
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "Pixelify Sans", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
+    font-size: 17px;
+    background: none; /* This kills the ghost squares */
+    margin: 0;
+    padding: 0;
+}
+
+/* 2. Make the Waybar window and its main container invisible */
+window#waybar, 
+window#waybar > box {
+    background: transparent;
+    background-color: transparent;
+}
+
+/* 3. The Pills - These are the ONLY things that get a background */
+.modules-left,
+.modules-center,
+.modules-right {
+    background: @bg0;
+    padding: 4px 12px;
+    border-radius: 28px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    /* margin adds air around the pill so it doesn't touch the window edge */
+    margin: 2px 0; 
+}
+
+/* 4. Workspaces & Tags (Resetting compositor defaults) */
+#workspaces, #tags, #dwl-tags {
+    background: transparent;
+}
+
+#workspaces button, #tags button {
+    padding: 0 8px;
+    margin: 2px;
+    color: @grey0;
+    transition: all 0.3s ease;
+    border-radius: 16px;
+    background: transparent;
+}
+
+/* The Active Gradient Pill */
+#workspaces button.active,
+#workspaces button.focused,
+#tags button.focused,
+#tags button.occupied {
+    background: linear-gradient(135deg, @blue 0%, @purple 50%, @red 100%);
+    color: @bg0;
+    min-width: 35px;
+}
+
+/* 5. Individual Module Colors */
+#custom-launcher { color: @fg; }
+#custom-home-folder { color: @blue; }
+#window, #dwl-window { color: @fg; font-weight: bold; }
+#custom-media { color: @aqua; }
+#clock { color: @fg; font-weight: bold; }
+#backlight, #pulseaudio { color: @yellow; }
+#network { color: @purple; }
+#battery { color: @green; }
+#custom-notification { color: @red; }
+#power-profiles-daemon { color: @aqua; }
+
+/* Tooltips */
+tooltip {
+    background: @bg2;
+    border: 1px solid @bg3;
+    border-radius: 12px;
+}
+tooltip label { color: @fg; padding: 6px; }

@@ -1,0 +1,75 @@
+{
+    "telemetry.sqmId": "",
+    "telemetry.machineId": "3444c374051d784b56cb7bed7906de0bec781f8d8e0f7343b7709148be356e08",
+    "telemetry.macMachineId": "870e6f1a3621bfe816793db2dae49def63d8e338f30af49a7b39883903fbb753",
+    "telemetry.devDeviceId": "8a2815eb-40e7-4d21-a818-091aff6578d4",
+    "backupWorkspaces": {
+        "workspaces": [],
+        "folders": [
+            {
+                "folderUri": "file:///home/ahmad/Downloads/My_Game/first-game"
+            }
+        ],
+        "emptyWindows": []
+    },
+    "windowControlHeight": 35,
+    "profileAssociations": {
+        "workspaces": {
+            "file:///home/ahmad/Downloads/My_Game/first-game": "__default__profile__"
+        },
+        "emptyWindows": {}
+    },
+    "windowsState": {
+        "lastActiveWindow": {
+            "folder": "file:///home/ahmad/Downloads/My_Game/first-game",
+            "backupPath": "/home/ahmad/.config/Cursor/Backups/15d7caf8ec39bcb6890ba42db49d7579",
+            "uiState": {
+                "mode": 1,
+                "x": 0,
+                "y": 0,
+                "width": 1526,
+                "height": 810
+            }
+        },
+        "openedWindows": []
+    },
+    "theme": "vs-dark",
+    "themeBackground": "#181818",
+    "windowSplash": {
+        "zoomLevel": 0,
+        "baseTheme": "vs-dark",
+        "colorInfo": {
+            "foreground": "rgba(228, 228, 228, 0.92)",
+            "background": "#181818",
+            "editorBackground": "#181818",
+            "titleBarBackground": "#141414",
+            "titleBarBorder": "rgba(228, 228, 228, 0.07)",
+            "activityBarBackground": "#141414",
+            "sideBarBackground": "#141414",
+            "sideBarBorder": "rgba(228, 228, 228, 0.07)",
+            "statusBarBackground": "#141414",
+            "statusBarBorder": "rgba(228, 228, 228, 0.07)",
+            "statusBarNoFolderBackground": "#141414"
+        },
+        "layoutInfo": {
+            "sideBarSide": "right",
+            "editorPartMinWidth": 220,
+            "titleBarHeight": 35,
+            "activityBarWidth": 0,
+            "sideBarWidth": 214,
+            "auxiliarySideBarWidth": 1092,
+            "statusBarHeight": 22,
+            "windowBorder": false
+        }
+    },
+    "windowSplashWorkspaceOverride": {
+        "layoutInfo": {
+            "auxiliarySideBarWidth": [
+                1092,
+                [
+                    "dc5efa8db34860403a0a9c0d837e86f6"
+                ]
+            ]
+        }
+    }
+}

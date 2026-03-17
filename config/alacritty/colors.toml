@@ -1,0 +1,23 @@
+[colors.primary]
+background = '@{surface.hex}'
+foreground = '@{on_surface.hex}'
+
+[colors.normal]
+black   = '@{surface.hex}'
+red     = '@{error.hex}'
+green   = '@{primary.hex}'
+yellow  = '@{tertiary.hex}'
+blue    = '@{secondary.hex}'
+magenta = '@{outline.hex}'
+cyan    = '@{primary_container.hex}'
+white   = '@{on_surface.hex}'
+
+[colors.bright]
+black   = '@{surface_variant.hex}'
+red     = '@{error_container.hex}'
+green   = '@{primary.hex}'
+yellow  = '@{tertiary_container.hex}'
+blue    = '@{secondary_container.hex}'
+magenta = '@{outline_variant.hex}'
+cyan    = '@{primary_container.hex}'
+white   = '@{on_surface_variant.hex}'
