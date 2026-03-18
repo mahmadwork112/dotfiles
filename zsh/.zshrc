@@ -1,3 +1,6 @@
+# Starting fastfetch at startup of terminals
+fastfetch
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -76,4 +79,8 @@ eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
 # SSH Agent for github (using keychain)
-eval $(keychain --eval --agents ssh id_ed25519)
+eval $(keychain --eval --quiet --agents ssh id_ed25519)
+
+
+# Created by `pipx` on 2026-03-18 09:28:47
+export PATH="$PATH:/home/ahmad/.local/bin"

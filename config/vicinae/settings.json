@@ -10,6 +10,9 @@
 
 {
    "$schema": "https://vicinae.com/schemas/config.json",
+   "imports": [
+    "base_config.json"
+  ],
    "providers": {
       "@sovereign/store.vicinae.awww-switcher": {
          "preferences": {
