@@ -74,3 +74,6 @@ alias ..='cd ..'
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
+
+# SSH Agent for github (using keychain)
+eval $(keychain --eval --agents ssh id_ed25519)
