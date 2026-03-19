@@ -98,7 +98,7 @@ input {
 cursor {
   // The name must match with ~/.local/share/icons/
   xcursor-theme "Bibata-Modern-Amber"
-  xcursor-size 24
+  xcursor-size 18
 }
 
 layout {
@@ -144,25 +144,18 @@ layout {
 
 // clean up the hyprland starts
 // systemctl services
-spawn-at-startup "systemctl" "--user" "stop" "xdg-desktop-portal-hyprland"
-spawn-at-startup "systemctl" "--user" "restart" "xdg-desktop-portal"
-spawn-at-startup "systemctl" "--user" "stop" "vibepanel.service"
-spawn-at-startup "systemctl" "--user" "start" "awww-daemon.service"
-spawn-at-startup "systemctl" "--user" "start" "vicinae.service"
+// spawn-at-startup "systemctl" "--user" "stop" "xdg-desktop-portal-hyprland"
+// spawn-at-startup "systemctl" "--user" "restart" "xdg-desktop-portal"
+// spawn-at-startup "systemctl" "--user" "start" "awww-daemon.service"
+//
+// spawn-at-startup "awww" "img" "/home/ahmad/Pictures/Wallpapers/0anime4.jpg" // the default wallpaper
+// spawn-at-startup "swaync"
+// spawn-at-startup "swayosd server"
+// spawn-at-startup "waybar"
+// spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
+// spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
-spawn-at-startup "awww" "img" "~/Pictures/Wallpapers/0anime4.jpg" // the default wallpaper
-spawn-at-startup "swaync"
-spawn-at-startup "swayosd server"
-spawn-at-startup "waybar"
-spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
-spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
-spawn-at-startup "swayidle" "-w" \
-    "timeout" "150" "hyprlock -f -c 000000" \
-    "timeout" "600" "niri msg action power-off-monitors" \
-    "resume" "niri msg action power-on-monitors" \
-    "before-sleep" "swaylock -f -c 000000"
-
-// spawn-at-startup "~/.config/niri/autostart.sh"
+spawn-at-startup "~/.config/niri/scripts/autostart.sh"
 
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
@@ -176,8 +169,42 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // Animation settings.
 // The wiki explains how to configure individual animations:
 // https://yalter.github.io/niri/Configuration:-Animations
+
 animations {
-    // off
+    workspace-switch {
+        spring damping-ratio=0.80 stiffness=523 epsilon=0.0001
+    }
+    window-open {
+        duration-ms 150
+        curve "ease-out-expo"
+    }
+    window-close {
+        duration-ms 150
+        curve "ease-out-quad"
+    }
+    horizontal-view-movement {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+    }
+    window-movement {
+        spring damping-ratio=0.75 stiffness=323 epsilon=0.0001
+    }
+    window-resize {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+    }
+    config-notification-open-close {
+        spring damping-ratio=0.65 stiffness=923 epsilon=0.001
+    }
+    screenshot-ui-open {
+        duration-ms 200
+        curve "ease-out-quad"
+    }
+    overview-open-close {
+        spring damping-ratio=0.85 stiffness=800 epsilon=0.0001
+    }
+}
+
+overview {
+  zoom 0.3
 }
 
 // Workspaces names
@@ -187,14 +214,20 @@ workspace "media"
 workspace "editor"
 workspace "other"
 
-layer-rule {
-  match namespace="^gtklock$"
-}
+// window-rule {
+//   match is-floating=false
+//   baba-is-float true
+// }
 
 window-rule {
-  match app-id="rofi"
-  open-floating true
-  default-floating-position x=0 y=0
+    match app-id="rofi"
+    
+    // Ensure Rofi is floating
+    open-floating true
+    
+    // Optional: If you want Rofi to NOT scale (zoom) while it slides
+    // Note: If these still cause errors, remove them; the slide above is the main part.
+    draw-border-with-background false
 }
 
 window-rule {
@@ -284,6 +317,10 @@ binds {
     Mod+Ctrl+V { spawn-sh "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
     Mod+Shift+C { spawn "hyprpicker" "--autocopy" "--notify" "--scale=6"; }
     Mod+Alt+R { spawn "niri" "msg" "action" "focus-window" "cast"; }
+    Mod+Ctrl+E { spawn "rofi" "-show" "emoji-picker" "-theme" "~/.config/rofi/themes/emoji-picker.rasi"; }
+    Mod+Ctrl+W { spawn "rofi" "-show" "wallpaper" "-theme" "~/.config/rofi/themes/wallpaper.rasi"; }
+    Mod+Ctrl+B { spawn "rofi" "-show" "bw"; }
+    Mod+Ctrl+X { spawn "rofi" "-show" "power-menu" "-theme" "~/.config/rofi/themes/power-menu.rasi"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.

@@ -1,0 +1,4 @@
+rofi_command="rofi -theme $HOME/.config/rofi/theme.rasi"
+
+copy_command ="xclip -selection clipboard"
+clear-clipboard=30

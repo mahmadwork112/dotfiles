@@ -4,14 +4,10 @@
     "telemetry.devDeviceId": "8a2815eb-40e7-4d21-a818-091aff6578d4",
     "backupWorkspaces": {
         "workspaces": [],
-        "folders": [
-            {
-                "folderUri": "file:///home/ahmad/Downloads/My_Game/randomly-generate-rooms"
-            }
-        ],
+        "folders": [],
         "emptyWindows": [
             {
-                "backupFolder": "1771081106031"
+                "backupFolder": "1773902970006"
             }
         ]
     },
@@ -21,7 +17,8 @@
             "file:///home/ahmad/Downloads/My_Game/randomly-generate-rooms": "__default__profile__"
         },
         "emptyWindows": {
-            "1771081106031": "__default__profile__"
+            "1771081106031": "__default__profile__",
+            "1773902970006": "__default__profile__"
         }
     },
     "theme": "vs-dark",
@@ -48,22 +45,21 @@
             "editorPartMinWidth": 220,
             "titleBarHeight": 35,
             "activityBarWidth": 48,
-            "sideBarWidth": 300,
-            "auxiliaryBarWidth": 300,
+            "sideBarWidth": 0,
+            "auxiliaryBarWidth": 0,
             "statusBarHeight": 22,
             "windowBorder": false
         }
     },
     "windowsState": {
         "lastActiveWindow": {
-            "folder": "file:///home/ahmad/Downloads/My_Game/randomly-generate-rooms",
-            "backupPath": "/home/ahmad/.config/Code/Backups/c0244b757815a06a6ad41a284c773e33",
+            "backupPath": "/home/ahmad/.config/Code/Backups/1773902970006",
             "uiState": {
                 "mode": 1,
                 "x": 0,
                 "y": 0,
                 "width": 1526,
-                "height": 810
+                "height": 799
             }
         },
         "openedWindows": []

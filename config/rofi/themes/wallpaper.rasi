@@ -1,0 +1,105 @@
+/**
+ * Master Base Theme: Modern Glass
+ * Author: Gemini
+ */
+
+* {
+    /* Colors */
+    bg-col:      #11111bE6; /* Deep dark with 90% transparency */
+    bg-alt:      #1e1e2e;
+    accent-col:  #c8b2fa;   /* Pastel Blue Accent */
+    text-col:    #cdd6f4;
+    text-alt:    #7f849c;
+    urgent-col:  #f38ba8;
+    
+    /* Layout Defaults */
+    font: "JetBrainsMono Nerd Font 12";
+    background-color: transparent;
+    text-color: @text-col;
+    margin: 0;
+    padding: 0;
+    spacing: 0;
+}
+
+window {
+    width: 1000px;
+    height: 700px;
+    background-color: @bg-col;
+    border: 2px;
+    border-color: @accent-col;
+    border-radius: 12px;
+}
+
+mainbox {
+    children: [ "inputbar", "listview" ];
+}
+
+inputbar {
+    enabled: true;
+    spacing: 10px;
+    padding: 20px;
+    background-color: @bg-alt;
+    children: [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled: true;
+    padding: 8px 12px;
+    background-color: @accent-col;
+    text-color: @bg-alt;
+    border-radius: 6px;
+}
+
+entry {
+    enabled: true;
+    padding: 8px;
+    text-color: @text-col;
+    placeholder: "Search...";
+    placeholder-color: @text-alt;
+}
+
+listview {
+    enabled: true;
+    columns: 3;
+    lines: 3;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    reverse: false;
+    fixed-height: true;
+    fixed-columns: true;
+    spacing: 5px;
+    padding: 10px;
+}
+
+element {
+    enabled: true;
+    spacing: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+element normal.normal {
+    background-color: inherit;
+    text-color: inherit;
+}
+
+element selected.normal {
+    background-color: @accent-col;
+    text-color: @bg-alt;
+}
+
+element-icon {
+    size: 250px;
+    cursor: inherit;
+}
+
+element-text {
+    enabled: false;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+    cursor: inherit;
+    text-color: inherit;
+}

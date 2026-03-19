@@ -1,0 +1,78 @@
+/**
+ * Master Base Theme: Modern Dark
+ */
+
+* {
+    /* Colors - Catppuccin Mocha Palette */
+    bg-col:      #11111b; 
+    bg-alt:      #181825;
+    accent-col:  #89b4fa;
+    text-col:    #cdd6f4;
+    text-alt:    #7f849c;
+    
+    font: "JetBrainsMono Nerd Font 12";
+}
+
+window {
+    width: 600px;
+    background-color: @bg-col;  /* Explicitly set BG */
+    border: 2px;
+    border-color: @accent-col;
+    border-radius: 12px;
+    text-color: @text-col;
+}
+
+mainbox {
+    background-color: @bg-col;
+    children: [ "inputbar", "listview" ];
+}
+
+inputbar {
+    padding: 15px;
+    background-color: @bg-alt;
+    children: [ "prompt", "entry" ];
+    border-radius: 10px 10px 0px 0px;
+}
+
+prompt {
+    background-color: @accent-col;
+    text-color: @bg-col;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+entry {
+    background-color: @bg-alt;
+    text-color: @text-col;
+    padding: 8px;
+}
+
+listview {
+    background-color: @bg-col;
+    columns: 1;
+    lines: 8;
+    spacing: 5px;
+    padding: 10px;
+}
+
+element {
+    background-color: transparent;
+    text-color: @text-col;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+element selected.normal {
+    background-color: @accent-col;
+    text-color: @bg-col;
+}
+
+element-icon {
+    background-color: transparent;
+    size: 24px;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+}

@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+
+# 1. Ensure the script knows where your binaries are (Zsh-specific fix)
+export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+# 2. Configuration
+WALL_DIR="$HOME/Pictures/Wallpapers"
+
+# 3. Logic: If an argument is passed, set the wallpaper
+if [[ -n "$1" ]]; then
+    # Use the full path to your image
+    # We use 'awww set' - make sure this is the correct command for your version
+    awww img "$WALL_DIR/$1" --transition-type left --transition-duration 1.5
+    
+    # Close Rofi completely after selection
+    pkill -x rofi
+    exit 0
+fi
+
+# 4. Generate the list for Rofi with Icons
+# Using Zsh globbing to find images
+for file in $WALL_DIR/*.(jpg|jpeg|png|webp|gif)(.N); do
+    # Get just the filename for the label
+    filename=$(basename "$file")
+    # Output: "Filename\0icon\x1f/Full/Path/To/Icon\n"
+    echo -en "${filename}\0icon\x1f${file}\n"
+done

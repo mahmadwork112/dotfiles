@@ -83,4 +83,5 @@ eval $(keychain --eval --quiet --agents ssh id_ed25519)
 
 
 # Created by `pipx` on 2026-03-18 09:28:47
-export PATH="$PATH:/home/ahmad/.local/bin"
+export PATH="$PATH:/home/ahmad/.local/bin:/usr/local/bin:/usr/bin"
+

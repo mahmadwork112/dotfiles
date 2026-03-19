@@ -1,0 +1,161 @@
+
+* {
+    /* Base Colors */
+    font:           "Pixelify Sans 12";
+
+    background:     #1a1b26D9; /* 85% Opacity Dark Navy */
+    background-alt: #24283bE6; /* Slightly more solid for contrast */
+    foreground:     #a9b1d6;
+    selected:       #7aa2f7;   
+    active:         #414868B3; /* 70% Opacity for selection */
+    urgent:         #f7768e;
+    
+    /* Transparent Helpers */
+    bg-item:        #ffffff05; /* Very faint ghost-white for unselected items */
+}
+
+/*****----- Main Window -----*****/
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  false;
+    width:                       800px;
+    x-offset:                    0px;
+    y-offset:                    0px;
+
+    enabled:                     true;
+    margin:                      0px;
+    padding:                     0px;
+    border:                      1px solid;
+    border-radius:               15px;
+    border-color:                #414868;   
+    cursor:                      "default";
+    
+    /* Using background color instead of image */
+    background-color:            @background;
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    enabled:                     true;
+    spacing:                     0px;
+    margin:                      0px;
+    padding:                     0px;
+    background-color:            transparent;
+    children:                    [ "inputbar", "listview", "mode-switcher" ];
+}
+
+/*****----- Mode Switcher (The Bottom Bar) -----*****/
+mode-switcher {
+    enabled:                     true;
+    spacing:                     15px;
+    background-color:            transparent;
+}
+
+button {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: @background-alt;
+    text-color: @foreground;
+    cursor: pointer;
+}
+
+buttom selected {
+    background-color: @selected;
+    text-color: @background;
+}
+
+/*****----- Inputbar -----*****/
+inputbar {
+    enabled:                     true;
+    spacing:                     0px;
+    margin:                      0px;
+    padding:                     0px;
+    background-color:            #00000040; /* Subtle dark tint for the bar */
+    text-color:                  @foreground;
+    children:                    [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:                     true;
+    padding:                     15px;
+    background-color:            @selected;
+    text-color:                  #1a1b26; /* Dark text for contrast */
+    font:                        "FiraCode Nerd Font 12";
+}
+
+entry {
+    enabled:                     true;
+    background-color:            transparent;
+    text-color:                  #c0caf5;
+    padding:                     15px;
+    cursor:                      text;
+    placeholder:                 "Search...";
+    placeholder-color:           #565f89;
+}
+
+/*****----- Listview -----*****/
+listview {
+    enabled:                     true;
+    columns:                     4;
+    lines:                       3;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    reverse:                     false;
+    fixed-height:                true;
+    fixed-columns:               true;
+    
+    spacing:                     10px;
+    margin:                      10px 0px;
+    padding:                     5px 15px;
+    background-color:            transparent;
+}
+
+/*****----- Elements -----*****/
+element {
+    enabled:                     true;
+    spacing:                     0px;
+    padding:                     10px;
+    border-radius:               10px;
+    background-color:            @bg-item; 
+    text-color:                  @foreground;
+    cursor:                      pointer;
+    orientation:                 vertical;
+    children:                    [ "element-icon", "element-text" ];
+}
+
+element normal.normal {
+    background-color:            @bg-item;
+    text-color:                  @foreground;
+}
+
+element selected.normal {
+    background-color:            @active;
+    text-color:                  #bb9af7; /* Magenta/Purple tint for selected text */
+    border:                      0px 0px 0px 4px solid;
+    border-color:                @selected;
+}
+
+element-icon {
+    enabled:                     true;
+    background-color:            transparent;
+    size:                        90px;
+    horizontal-align:            0.5;
+    vertical-align:              0.5;
+    text-color:                  inherit;
+    cursor:                      inherit;
+}
+
+element-text {
+    font:                        "Pixelify Sans 12";
+    background-color:            transparent;
+    text-color:                  inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+
+    expand:                      true;
+    max-lines:                   1;
+}
