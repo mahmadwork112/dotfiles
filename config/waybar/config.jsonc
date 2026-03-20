@@ -66,6 +66,7 @@
 
   "clock": {
     "format": "{:%I:%M :%p}",
+    "format-alt": "{:%Y-%m-%d}",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
   },
 
