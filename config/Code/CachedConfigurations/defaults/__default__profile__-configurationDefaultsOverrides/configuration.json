@@ -1,1 +1,1 @@
-{"simpleBrowser.useIntegratedBrowser":true,"http.systemCertificatesNode":true,"chat.editMode.hidden":true,"chat.experimental.useSkillAdherencePrompt":true,"workbench.editorAssociations":{"*.copilotmd":"vscode.markdown.preview.editor"},"github.copilot.chat.agent.largeToolResultsToDisk.enabled":true,"github.copilot.chat.inlineEdits.nextCursorPrediction.currentFileMaxTokens":5000}
+{"simpleBrowser.useIntegratedBrowser":true,"http.systemCertificatesNode":true,"chat.tips.enabled":true,"chat.experimental.useSkillAdherencePrompt":true}

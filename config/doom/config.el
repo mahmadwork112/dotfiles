@@ -314,3 +314,9 @@
 
 (setq sly-lisp-implementations
       '((sbcl ("sbcl" "--dynamic-space-size" "2600"))))
+
+
+;; ASM mode
+(add-to-list 'auto-mode-alist '("\\.asm\\'" .asm-mode))
+(add-to-list 'auto-mode-alist '("\\.s\\'" .asm-mode))
+(setq asm-comment-char ?\;)
