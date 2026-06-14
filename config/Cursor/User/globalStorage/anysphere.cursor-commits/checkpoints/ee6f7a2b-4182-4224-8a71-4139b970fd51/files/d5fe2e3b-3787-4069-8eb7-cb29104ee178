@@ -1,0 +1,382 @@
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  ~/.config/quickshell/shell.qml                                  ║
+// ║  QuickShell Notification Center — SwayNC replacement             ║
+// ║                                                                   ║
+// ║  FILES:                                                           ║
+// ║    shell.qml           ← you are here (root + state + theme)      ║
+// ║    NotificationPanel.qml   ← the slide-in right panel            ║
+// ║    ToastPopup.qml          ← the transient toast popups           ║
+// ║                                                                   ║
+// ║  HOW TO RELOAD:  quickshell -r  (or your WM reload shortcut)     ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+import Quickshell
+import Quickshell.Wayland
+import Quickshell.Services.Notifications
+import QtQuick
+import QtQuick.Controls
+
+ShellRoot {
+    id: root
+
+    // ══════════════════════════════════════════════════════════════
+    //  THEME — All colors, sizes, and font settings live here.
+    //  Edit this object to completely restyle the notification center.
+    // ══════════════════════════════════════════════════════════════
+    QtObject {
+        id: theme
+
+        // ── Background / Surface colors ──────────────────────────
+        property color bgPanel:       "#1e1e2e"   // Main panel background
+        property color bgItem:        "#181825"   // Notification card background
+        property color bgItemHover:   "#313244"   // Card background on hover
+        property color borderColor:   "#45475a"   // Dividers and borders
+
+        // ── Text colors ──────────────────────────────────────────
+        property color textPrimary:   "#cdd6f4"   // Notification title / main text
+        property color textSecondary: "#a6adc8"   // App name, body text
+        property color textDim:       "#6c7086"   // Timestamps, faint labels
+
+        // ── Urgency accent colors ────────────────────────────────
+        // These appear as a left-edge colored bar on each notification.
+        property color urgencyLow:      "#a6e3a1"  // Green  — low-priority
+        property color urgencyNormal:   "#89b4fa"  // Blue   — normal
+        property color urgencyCritical: "#f38ba8"  // Red    — critical / urgent
+
+        // ── Sizes ────────────────────────────────────────────────
+        property int panelWidth:    400   // Width of the slide-in panel (px)
+        property int popupWidth:    360   // Width of toast popups (px)
+        property int cornerRadius:  12    // Panel / window corner rounding
+        property int itemRadius:    8     // Notification card corner rounding
+        property int padding:       14    // Inner padding inside cards
+        property int gap:           6     // Vertical gap between cards
+        property int panelPadding:  12    // Padding inside the panel itself
+
+        // ── Popup (toast) behavior ───────────────────────────────
+        property int popupDuration: 5000  // Auto-dismiss after this many ms (0 = never)
+        property int popupMaxShown: 5     // Max toasts on screen at once
+        //  TWEAK: Critical urgency toasts never auto-dismiss regardless of above.
+        //  To change that behavior, edit ToastPopup.qml → dismissTimer
+
+        // ── History ──────────────────────────────────────────────
+        property int maxStored: 50   // Max notifications kept in the panel history
+
+        // ── Animation speeds (ms) ────────────────────────────────
+        property int animPanel: 220   // Panel slide-in/out
+        property int animToast: 150   // Toast fade-in
+
+        // ── Font ─────────────────────────────────────────────────
+        // Change to any font installed on your system.
+        // If you use a Nerd Font, the icon glyphs (󰂚 etc.) will render correctly.
+        property string fontFamily: "sans-serif"
+        property int fontNormal: 13
+        property int fontSmall:  11
+        property int fontLarge:  15
+
+        // ── Popup position ───────────────────────────────────────
+        // Toasts appear at the top-right by default.
+        // To move to top-left: edit NotificationPopupWindow in this file —
+        // change `anchors.right: true` to `anchors.left: true`
+        // and adjust the margin side in `margins { right/left }`.
+        property int popupMargin: 12  // Gap from screen edge (px)
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  GLOBAL STATE
+    // ══════════════════════════════════════════════════════════════
+
+    // Whether the notification center panel is open.
+    // KEYBIND: In MangoWM config, bind a key to toggle this via IPC, e.g.:
+    //   bind = SUPER + N, exec, quickshell ipc call "root.panelOpen = !root.panelOpen"
+    // Or connect a status bar icon click to call root.togglePanel()
+    property bool panelOpen: false
+
+    // Do Not Disturb — when true, toasts are suppressed.
+    // Toggled via the DND button in the panel header.
+    property bool dndEnabled: false
+
+    function togglePanel() {
+        panelOpen = !panelOpen
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  NOTIFICATION SERVER
+    //  Registers on D-Bus as org.freedesktop.Notifications.
+    //  All apps (Discord, Spotify, system alerts, etc.) send here.
+    // ══════════════════════════════════════════════════════════════
+    NotificationServer {
+        id: notifServer
+
+        // keepOnReload: preserve notifications when QuickShell hot-reloads
+        keepOnReload: true
+
+        onNotification: function(notif) {
+            // Add to persistent history
+            notifStore.add(notif)
+
+            // Show a toast popup (unless DND is enabled)
+            if (!root.dndEnabled) {
+                popupStore.add(notif)
+            }
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  NOTIFICATION HISTORY STORE
+    //  Holds all received notifications as a plain JS array.
+    //  Reassigning `items` triggers reactive updates in QML.
+    // ══════════════════════════════════════════════════════════════
+    QtObject {
+        id: notifStore
+
+        property var items: []        // Array of notification data objects (newest first)
+        property int unreadCount: 0   // Badge counter
+
+        // Called when NotificationServer receives a new notification
+        function add(notif) {
+            var entry = {
+                id:       notif.id,
+                appName:  notif.appName  || "Unknown",
+                appIcon:  notif.appIcon  || "",
+                summary:  notif.summary  || "",
+                body:     notif.body     || "",
+                urgency:  notif.urgency,   // 0=Low  1=Normal  2=Critical
+                time:     new Date(),
+                read:     false,
+                // Build a plain list of actions (live refs for invoke())
+                actions:  buildActions(notif)
+            }
+
+            // Prepend (newest first), then cap length
+            var arr = [entry].concat(items)
+            if (arr.length > theme.maxStored) arr = arr.slice(0, theme.maxStored)
+            items = arr   // reassignment triggers QML reactivity
+
+            unreadCount++
+        }
+
+        function buildActions(notif) {
+            // TWEAK: Filter out unwanted actions here, e.g.:
+            //   if (act.identifier === "default") return  // skip "Open" default action
+            var result = []
+            for (var i = 0; i < notif.actions.length; i++) {
+                result.push({
+                    text: notif.actions[i].text,
+                    ref:  notif.actions[i]   // live ref — call .invoke() to trigger
+                })
+            }
+            return result
+        }
+
+        function removeById(id) {
+            items = items.filter(function(x) { return x.id !== id })
+        }
+
+        function clearAll() {
+            items = []
+            unreadCount = 0
+        }
+
+        function markAllRead() {
+            var arr = items.map(function(x) {
+                return Object.assign({}, x, { read: true })
+            })
+            items = arr
+            unreadCount = 0
+        }
+
+        // Returns the accent color for a given urgency level (0/1/2)
+        function urgencyColor(u) {
+            if (u === 0) return theme.urgencyLow
+            if (u === 2) return theme.urgencyCritical
+            return theme.urgencyNormal
+        }
+
+        // Human-readable relative timestamp (e.g. "3m ago", "2h ago")
+        function timeAgo(date) {
+            var diff = Math.floor((new Date() - date) / 1000)
+            if (diff < 60)    return "now"
+            if (diff < 3600)  return Math.floor(diff / 60) + "m ago"
+            if (diff < 86400) return Math.floor(diff / 3600) + "h ago"
+            return date.toLocaleDateString()
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  ACTIVE POPUP TOASTS STORE
+    //  Holds the currently-visible toast list (separate from history).
+    // ══════════════════════════════════════════════════════════════
+    QtObject {
+        id: popupStore
+
+        property var items: []
+
+        function add(notif) {
+            // If this notif ID already exists as a toast (replaced notif), remove it
+            removeById(notif.id)
+
+            // Drop oldest toast if we're at max
+            var arr = items.slice()
+            if (arr.length >= theme.popupMaxShown) {
+                arr.pop()
+            }
+
+            arr.unshift({
+                id:      notif.id,
+                appName: notif.appName  || "Unknown",
+                appIcon: notif.appIcon  || "",
+                summary: notif.summary  || "",
+                body:    notif.body     || "",
+                urgency: notif.urgency,
+                time:    new Date(),
+                actions: buildActions(notif),
+                // expireTimeout: how long this specific toast should stay (ms).
+                // -1 means use the global theme.popupDuration default.
+                expire:  notif.expireTimeout > 0 ? notif.expireTimeout : theme.popupDuration
+            })
+
+            items = arr
+        }
+
+        function buildActions(notif) {
+            var result = []
+            for (var i = 0; i < notif.actions.length; i++) {
+                result.push({ text: notif.actions[i].text, ref: notif.actions[i] })
+            }
+            return result
+        }
+
+        function removeById(id) {
+            items = items.filter(function(x) { return x.id !== id })
+        }
+
+        function clearAll() {
+            items = []
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  TOAST POPUP WINDOW
+    //  A transparent layer-shell window anchored to the top-right.
+    //  It contains a column of ToastPopup cards (from ToastPopup.qml).
+    // ══════════════════════════════════════════════════════════════
+    PanelWindow {
+        id: toastWindow
+
+        visible: popupStore.items.length > 0 && !root.dndEnabled
+
+        // ── Position: top-right corner ───────────────────────────
+        // TWEAK: Swap `right` → `left` for top-left toasts
+        anchors {
+            top:   true
+            right: true
+        }
+
+        // Size stretches to fit the stacked toasts
+        implicitWidth:  theme.popupWidth + (theme.popupMargin * 2)
+        implicitHeight: toastColumn.implicitHeight + (theme.popupMargin * 2)
+
+        // Stay on top, don't push other windows, no keyboard grab
+        exclusiveZone: 0
+
+        margins {
+            top:   theme.popupMargin
+            right: theme.popupMargin
+            // TWEAK: if you switch to left anchor, change `right` → `left` here
+        }
+
+        color: "transparent"
+
+        Column {
+            id: toastColumn
+            anchors {
+                top:   parent.top
+                left:  parent.left
+                right: parent.right
+            }
+            spacing: theme.gap
+
+            // Each active popup gets a ToastPopup card (from ToastPopup.qml)
+            Repeater {
+                model: popupStore.items
+
+                delegate: ToastPopup {
+                    // modelData = one entry from popupStore.items
+                    required property var modelData
+                    required property int index
+
+                    notifData:   modelData
+                    themeObj:    theme
+
+                    // When the toast is closed (by user or timeout), remove from store
+                    onDismissRequested: popupStore.removeById(modelData.id)
+
+                    // Clicking the toast body opens the panel
+                    onBodyClicked: {
+                        root.panelOpen = true
+                        popupStore.removeById(modelData.id)
+                    }
+                }
+            }
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  NOTIFICATION CENTER PANEL WINDOW
+    //  The full slide-in panel from NotificationPanel.qml.
+    // ══════════════════════════════════════════════════════════════
+    PanelWindow {
+        id: panelWindow
+
+        visible: root.panelOpen
+
+        // ── Position: full-height right side ────────────────────
+        // TWEAK: Change to `left: true` for a left-side panel
+        anchors {
+            top:    true
+            bottom: true
+            right:  true
+        }
+
+        // TWEAK: exclusiveZone pushes your taskbar/other panels.
+        // Set to `theme.panelWidth` to shift content, or 0 to overlay.
+        exclusiveZone: theme.panelWidth
+
+
+        // Use an explicit width so the layer surface always has real size.
+        // Some compositors/setups can ignore implicit sizing for panel windows.
+        width: theme.panelWidth
+        implicitWidth: theme.panelWidth
+        color: "transparent"
+
+        // Close panel on Escape key
+        Keys.onEscapePressed: root.panelOpen = false
+
+        // Mark all notifications as read whenever the panel opens
+        onVisibleChanged: {
+            if (visible) notifStore.markAllRead()
+        }
+
+        // The actual panel content lives in NotificationPanel.qml
+        NotificationPanel {
+            anchors.fill: parent
+
+            themeObj:    theme
+            notifItems:  notifStore.items
+            unreadCount: notifStore.unreadCount
+            dndActive:   root.dndEnabled
+
+            onClosePanel:   root.panelOpen = false
+            onToggleDnd:    root.dndEnabled = !root.dndEnabled
+            onClearAll:     { notifStore.clearAll(); popupStore.clearAll() }
+            onDismissNotif: (id) => notifStore.removeById(id)
+            onInvokeAction: (ref) => { if (ref) ref.invoke() }
+        }
+    }
+}

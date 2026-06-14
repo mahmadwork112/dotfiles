@@ -1,0 +1,1 @@
+{"timestamp":1779445647685,"paths":["./config.rasi","./themes/wallpaper.rasi","./themes/theme.rasi","./themes/power-menu.rasi","./themes/emoji-picker.rasi","./wallust/colors-rofi.rasi","./bin/lib-bwmenu","./bin/bwmenu","./bin/rofi-power-menu","./bin/wallpaper-picker"]}

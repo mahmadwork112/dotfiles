@@ -141,7 +141,6 @@
     "device": "intel_backlight",
     "format": "{percent}% {icon}",
     "format-icons": ["", "", "", "", "", "", "", "", ""],
-    "on-click-right": "~/.config/waybar/scripts/night-light.sh"
   },
 
   "power-profiles-daemon": {

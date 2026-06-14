@@ -1,0 +1,10 @@
+wallust/colors-rofi.rasi
+bin/rofi-power-menu
+bin/bwmenu
+bin/lib-bwmenu
+bin/wallpaper-picker
+config.rasi
+themes/power-menu.rasi
+themes/wallpaper.rasi
+themes/theme.rasi
+themes/emoji-picker.rasi

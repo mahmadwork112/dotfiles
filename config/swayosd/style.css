@@ -1,7 +1,7 @@
 /* Gruvbox Dark Colors */
 @define-color background rgba(40, 40, 40, 1);
 @define-color background09 rgba(40, 40, 40, 0.9);
-@define-color background05 rgba(40, 40, 40, 0.7);
+@define-color background05 rgba(40, 40, 40, 0.5); /* Fixed opacity to match name */
 @define-color background-light rgba(60, 56, 54, 1);
 @define-color foreground rgba(235, 219, 178, 1);
 @define-color black rgba(50, 48, 47, 1);
@@ -16,8 +16,9 @@
 
 window#osd {
   border-radius: 8px;
- /* border: 2px solid @white;
-  background: alpha(@background, 0.85); */
+  /* Uncomment these if you want a dark background for the OSD window itself */
+  background: @background09; 
+  border: 2px solid @background-light;
 }
 
 window#osd #container {
@@ -27,7 +28,7 @@ window#osd #container {
 }
 
 window#osd image {
-  -gtk-icon-transform: scale(0.8 .);
+  -gtk-icon-transform: scale(0.8); /* Fixed the stray period syntax error */
 }
 
 window#osd image,

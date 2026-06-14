@@ -1,5 +1,6 @@
 {
     "window.commandCenter": true
 ,
-  "material-code.primaryColor": "#184B52"
+  "material-code.primaryColor": "#184B52",
+  "window.autoDetectColorScheme": false
 }

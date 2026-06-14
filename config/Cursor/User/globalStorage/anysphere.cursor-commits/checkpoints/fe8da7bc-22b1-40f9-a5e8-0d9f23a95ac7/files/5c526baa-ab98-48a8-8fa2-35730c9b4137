@@ -1,0 +1,571 @@
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  NotificationPanel.qml                                           ║
+// ║  The slide-in notification center panel (right side drawer)      ║
+// ║                                                                   ║
+// ║  This file owns the panel's visual layout:                        ║
+// ║    • Header (title, unread badge, DND toggle, clear, close)       ║
+// ║    • Optional widget slot (add media player, toggles, etc.)       ║
+// ║    • Scrollable notification history list                         ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+Item {
+    id: panel
+
+    // ── Props passed in from shell.qml ──────────────────────────────
+    required property var    themeObj      // theme QtObject from shell.qml
+    required property var    notifItems    // notifStore.items array
+    required property int    unreadCount   // badge count
+    required property bool   dndActive     // DND state
+    required property bool   isOpen        // panel visibility state from shell.qml
+
+    // ── Signals back to shell.qml ───────────────────────────────────
+    signal closePanel
+    signal toggleDnd
+    signal clearAll
+    signal dismissNotif(var id)
+    signal invokeAction(var ref)
+    signal autoCloseRequested
+
+    // ── Slide-in animation ──────────────────────────────────────────
+    // The panel slides in from the right when it becomes visible.
+    property real slideOffset: 0
+
+    function playSlideIn() {
+        panel.slideOffset = themeObj.panelWidth
+        slideInAnimation.restart()
+    }
+
+    Component.onCompleted: {
+        if (panel.isOpen) panel.playSlideIn()
+    }
+
+    onIsOpenChanged: {
+        if (panel.isOpen) panel.playSlideIn()
+    }
+
+    Timer {
+        id: autoCloseTimer
+        interval: 220
+        repeat: false
+        onTriggered: {
+            if (panel.isOpen && !panelHover.containsMouse) {
+                panel.autoCloseRequested()
+            }
+        }
+    }
+
+    NumberAnimation {
+        id: slideInAnimation
+        target: panel
+        property: "slideOffset"
+        from: themeObj.panelWidth
+        to: 0
+        duration: themeObj.animPanel
+        easing.type: Easing.OutCubic
+    }
+
+    transform: Translate { x: panel.slideOffset }
+
+    // ── Root rectangle (panel background) ───────────────────────────
+    Rectangle {
+        anchors.fill: parent
+        color: themeObj.bgPanel
+
+        MouseArea {
+            id: panelHover
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.NoButton
+            propagateComposedEvents: true
+            onEntered: autoCloseTimer.stop()
+            onExited: {
+                if (panel.isOpen) autoCloseTimer.restart()
+            }
+        }
+
+        // Left-edge border line (subtle visual separator from the rest of the screen)
+        Rectangle {
+            anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+            width: 1
+            color: themeObj.borderColor
+            opacity: 0.6
+        }
+
+        ColumnLayout {
+            anchors {
+                fill:    parent
+                margins: themeObj.panelPadding
+            }
+            spacing: 0
+
+            // ══════════════════════════════════════════════════════
+            //  HEADER ROW
+            //  Contains: title + unread badge | [DND] [Clear] [Close]
+            // ══════════════════════════════════════════════════════
+            RowLayout {
+                Layout.fillWidth:   true
+                Layout.bottomMargin: 6
+                spacing: 4
+
+                // Panel title
+                Text {
+                    text: "Notifications"
+                    color: themeObj.textPrimary
+                    font {
+                        family:    themeObj.fontFamily
+                        pixelSize: themeObj.fontLarge
+                        weight:    Font.Medium
+                    }
+                }
+
+                // Unread count badge — only shown when there are unread items
+                Rectangle {
+                    visible: panel.unreadCount > 0
+                    width:   Math.max(20, badgeText.implicitWidth + 8)
+                    height:  18
+                    radius:  9
+                    color:   themeObj.urgencyNormal
+
+                    Text {
+                        id: badgeText
+                        anchors.centerIn: parent
+                        text: panel.unreadCount
+                        color: "#ffffff"
+                        font.pixelSize: 9
+                        font.weight:    Font.Bold
+                    }
+                }
+
+                Item { Layout.fillWidth: true }  // push buttons to the right
+
+                // ── DND Toggle ──
+                // TWEAK: Change the icon glyphs here if you're not using a Nerd Font.
+                // Plain-text alternatives: "🔔" / "🔕" or just "DND"
+                PanelHeaderButton {
+                    themeObj: panel.themeObj
+                    iconText: panel.dndActive ? "󰂛" : "󰂚"
+                    active:   panel.dndActive
+                    tooltip:  panel.dndActive
+                        ? "Do Not Disturb ON — click to disable"
+                        : "Enable Do Not Disturb"
+                    onClicked: panel.toggleDnd()
+                }
+
+                // ── Clear All ──
+                PanelHeaderButton {
+                    themeObj: panel.themeObj
+                    iconText: "󰆴"    // Nerd Font trash icon. Alt: "✕" or "⌫"
+                    tooltip:  "Clear all notifications"
+                    onClicked: panel.clearAll()
+                }
+
+                // ── Close Panel ──
+                PanelHeaderButton {
+                    themeObj: panel.themeObj
+                    iconText: "󰅖"    // Nerd Font close icon. Alt: "✕"
+                    tooltip:  "Close"
+                    onClicked: panel.closePanel()
+                }
+            }
+
+            // Divider below header
+            Rectangle {
+                Layout.fillWidth:    true
+                height:              1
+                color:               themeObj.borderColor
+                Layout.bottomMargin: 6
+            }
+
+
+            // ══════════════════════════════════════════════════════
+            //  OPTIONAL WIDGET AREA
+            //  Add your own widgets here — they appear between the
+            //  header and the notification list.
+            //
+            //  Ideas:
+            //    • Quick-toggle row (WiFi, Bluetooth, Night Light)
+            //    • MPRIS media player widget
+            //    • Calendar / date block
+            //    • Battery / brightness sliders
+            //
+            //  To enable, uncomment the block below and build your widget.
+            //  Each widget should use Layout.fillWidth: true.
+            // ══════════════════════════════════════════════════════
+
+            // ── EXAMPLE: Quick-toggle row ─────────────────────────
+            // RowLayout {
+            //     Layout.fillWidth: true
+            //     Layout.bottomMargin: 10
+            //     spacing: 8
+            //
+            //     // Each toggle is a rounded pill button
+            //     Repeater {
+            //         model: [
+            //             { label: "󰤨  WiFi",      active: true  },
+            //             { label: "󰂯  Bluetooth",  active: false },
+            //             { label: "󰖔  Night Light",active: false },
+            //         ]
+            //         delegate: Rectangle {
+            //             required property var modelData
+            //             Layout.fillWidth: true
+            //             height: 32
+            //             radius: 8
+            //             color: modelData.active ? themeObj.urgencyNormal : themeObj.bgItem
+            //             Text {
+            //                 anchors.centerIn: parent
+            //                 text: modelData.label
+            //                 color: modelData.active ? "#ffffff" : themeObj.textSecondary
+            //                 font.pixelSize: themeObj.fontSmall
+            //             }
+            //         }
+            //     }
+            // }
+
+            // ── EXAMPLE: Media player stub ────────────────────────
+            // Rectangle {
+            //     Layout.fillWidth: true
+            //     height: 72
+            //     radius: themeObj.itemRadius
+            //     color: themeObj.bgItem
+            //     Layout.bottomMargin: 10
+            //     Text {
+            //         anchors.centerIn: parent
+            //         text: "🎵  Media Player Widget"
+            //         color: themeObj.textDim
+            //         font.pixelSize: themeObj.fontSmall
+            //     }
+            // }
+
+
+            // ══════════════════════════════════════════════════════
+            //  NOTIFICATION LIST
+            //  Scrollable. Cards come from NotificationCard component below.
+            // ══════════════════════════════════════════════════════
+            ScrollView {
+                Layout.fillWidth:  true
+                Layout.fillHeight: true
+                clip:              true
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                // TWEAK: ScrollBar.vertical.policy: ScrollBar.AlwaysOn to always show scrollbar
+
+                Column {
+                    width:   parent.width
+                    spacing: themeObj.gap
+
+                    // ── Empty state (no notifications) ──────────
+                    Item {
+                        visible: notifItems.length === 0
+                        width:   parent.width
+                        height:  160
+
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 10
+
+                            // TWEAK: Change this icon/text to whatever you prefer
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text:  "󰂚"       // Nerd Font bell. Alt: "🔔"
+                                color: themeObj.textDim
+                                font.pixelSize: 36
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text:  "All caught up!"
+                                color: themeObj.textDim
+                                font { family: themeObj.fontFamily; pixelSize: themeObj.fontNormal }
+                            }
+                        }
+                    }
+
+                    // ── Notification cards ───────────────────────
+                    Repeater {
+                        model: notifItems
+
+                        delegate: NotificationCard {
+                            required property var modelData
+                            required property int index
+
+                            width:     parent.width
+                            themeObj:  panel.themeObj
+                            notifData: modelData
+
+                            onDismissRequested: panel.dismissNotif(modelData.id)
+                            onActionInvoked:    (ref) => {
+                                panel.invokeAction(ref)
+                                panel.dismissNotif(modelData.id)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  COMPONENT: PanelHeaderButton
+    //  Small icon button used in the panel header row.
+    // ══════════════════════════════════════════════════════════════
+    component PanelHeaderButton: Rectangle {
+        id: hbtn
+
+        required property var    themeObj
+        property string          iconText: ""
+        property string          tooltip:  ""
+        property bool            active:   false
+
+        signal clicked
+
+        width:  26
+        height: 26
+        radius: 5
+        z: 10
+
+        color: {
+            if (hbtnArea.containsMouse) return Qt.rgba(themeObj.urgencyNormal.r, themeObj.urgencyNormal.g, themeObj.urgencyNormal.b, 0.20)
+            if (active)                 return Qt.rgba(themeObj.urgencyNormal.r, themeObj.urgencyNormal.g, themeObj.urgencyNormal.b, 0.12)
+            return "transparent"
+        }
+        Behavior on color { ColorAnimation { duration: 100 } }
+        border.width: (hbtnArea.containsMouse || active) ? 1 : 0
+        border.color: hbtnArea.containsMouse ? themeObj.urgencyNormal : themeObj.borderColor
+        Behavior on border.color { ColorAnimation { duration: 100 } }
+
+        Text {
+            anchors.centerIn: parent
+            text:  hbtn.iconText
+            color: (hbtnArea.containsMouse || hbtn.active) ? themeObj.textPrimary : themeObj.textSecondary
+            font.pixelSize: 14
+        }
+
+        MouseArea {
+            id:          hbtnArea
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape:  Qt.PointingHandCursor
+            onClicked:    hbtn.clicked()
+        }
+
+        Rectangle {
+            visible: hbtnArea.containsMouse && hbtn.tooltip !== ""
+            anchors.top: hbtn.bottom
+            anchors.horizontalCenter: hbtn.horizontalCenter
+            anchors.topMargin: 6
+            z: 999
+            radius: 5
+            color: themeObj.bgItem
+            border.color: themeObj.borderColor
+            border.width: 1
+            opacity: 0.98
+
+            width: tipText.implicitWidth + 12
+            height: tipText.implicitHeight + 8
+
+            Text {
+                id: tipText
+                anchors.centerIn: parent
+                text: hbtn.tooltip
+                color: themeObj.textSecondary
+                font.family: themeObj.fontFamily
+                font.pixelSize: themeObj.fontSmall
+            }
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════════
+    //  COMPONENT: NotificationCard
+    //  A single notification in the history list.
+    //  Layout: [urgency bar] [icon  app name  timestamp  ✕]
+    //                        [summary]
+    //                        [body]
+    //                        [action buttons]
+    // ══════════════════════════════════════════════════════════════
+    component NotificationCard: Rectangle {
+        id: card
+
+        required property var themeObj
+        required property var notifData
+
+        signal dismissRequested
+        signal actionInvoked(var ref)
+
+        height: cardContent.implicitHeight + themeObj.padding * 2
+        radius: themeObj.itemRadius
+
+        color: cardHover.containsMouse ? themeObj.bgItemHover : themeObj.bgItem
+        Behavior on color { ColorAnimation { duration: 100 } }
+
+        // Left urgency color bar
+        // Fades slightly once the notification has been read.
+        Rectangle {
+            anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+            width:   3
+            radius:  2
+            color:   urgencyToColor(notifData.urgency)
+            opacity: notifData.read ? 0.3 : 1.0
+            Behavior on opacity { NumberAnimation { duration: 200 } }
+        }
+
+        function urgencyToColor(u) {
+            if (u === 0) return themeObj.urgencyLow
+            if (u === 2) return themeObj.urgencyCritical
+            return themeObj.urgencyNormal
+        }
+
+        function timeAgo(date) {
+            var diff = Math.floor((new Date() - date) / 1000)
+            if (diff < 60)    return "now"
+            if (diff < 3600)  return Math.floor(diff / 60) + "m ago"
+            if (diff < 86400) return Math.floor(diff / 3600) + "h ago"
+            return (date instanceof Date) ? date.toLocaleDateString() : ""
+        }
+
+        ColumnLayout {
+            id: cardContent
+            anchors {
+                left:        parent.left
+                right:       parent.right
+                top:         parent.top
+                margins:     themeObj.padding
+                leftMargin:  themeObj.padding + 8   // leave room for urgency bar
+            }
+            spacing: 3
+
+            // ── Top row: icon + app name + timestamp + dismiss ───
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 5
+
+                // App icon from the system icon theme
+                // TWEAK: Remove this Image block if you don't want app icons
+                Image {
+                    visible:    notifData.appIcon !== ""
+                    source:     notifData.appIcon !== "" ? ("image://icon/" + notifData.appIcon) : ""
+                    width:      12
+                    height:     12
+                    sourceSize: Qt.size(12, 12)
+                    // Fallback: if the icon doesn't load, the space collapses (visible: false)
+                    onStatusChanged: if (status === Image.Error) visible = false
+                }
+
+                Text {
+                    text:  notifData.appName
+                    color: themeObj.textSecondary
+                    font {
+                        family:    themeObj.fontFamily
+                        pixelSize: themeObj.fontSmall
+                        weight:    Font.Medium
+                    }
+                    elide:           Text.ElideRight
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text:  card.timeAgo(notifData.time)
+                    color: themeObj.textDim
+                    font { family: themeObj.fontFamily; pixelSize: themeObj.fontSmall }
+                }
+
+                // Dismiss (✕) button
+                Text {
+                    text:  "✕"
+                    color: dismissHover.containsMouse ? themeObj.urgencyCritical : themeObj.textDim
+                    font.pixelSize: 9
+                    Behavior on color { ColorAnimation { duration: 80 } }
+
+                    MouseArea {
+                        id:           dismissHover
+                        anchors.fill:  parent
+                        hoverEnabled:  true
+                        cursorShape:   Qt.PointingHandCursor
+                        onClicked:     card.dismissRequested()
+                    }
+                }
+            }
+
+            // ── Summary (title, bold) ────────────────────────────
+            Text {
+                visible:          notifData.summary !== ""
+                text:             notifData.summary
+                color:            themeObj.textPrimary
+                font {
+                    family:    themeObj.fontFamily
+                    pixelSize: themeObj.fontNormal
+                    weight:    Font.SemiBold
+                }
+                wrapMode:         Text.WordWrap
+                Layout.fillWidth: true
+                // TWEAK: increase maximumLineCount to show more of long summaries
+                maximumLineCount: 1
+                elide:            Text.ElideRight
+            }
+
+            // ── Body text ────────────────────────────────────────
+            Text {
+                visible:          notifData.body !== ""
+                text:             notifData.body
+                color:            themeObj.textSecondary
+                font { family: themeObj.fontFamily; pixelSize: themeObj.fontSmall }
+                wrapMode:         Text.WordWrap
+                Layout.fillWidth: true
+                // TWEAK: increase to show more body lines in the panel
+                maximumLineCount: 2
+                elide:            Text.ElideRight
+            }
+
+            // ── Action buttons ───────────────────────────────────
+            // TWEAK: Remove this block if you don't want action buttons in the panel.
+            // Apps like Spotify ("Play", "Skip"), email clients, etc. send actions.
+            RowLayout {
+                visible:          notifData.actions.length > 0
+                Layout.fillWidth: true
+                Layout.topMargin: 3
+                spacing:          4
+
+                Repeater {
+                    model: notifData.actions
+
+                    delegate: Rectangle {
+                        required property var modelData
+
+                        height: 22
+                        width:  actionText.implicitWidth + 12
+                        radius: 4
+                        color:  actionHover.containsMouse ? themeObj.bgPanel : themeObj.bgItem
+                        border { color: themeObj.borderColor; width: 1 }
+
+                        Text {
+                            id:              actionText
+                            anchors.centerIn: parent
+                            text:             modelData.text
+                            color:            themeObj.textPrimary
+                            font { family: themeObj.fontFamily; pixelSize: themeObj.fontSmall }
+                        }
+
+                        MouseArea {
+                            id:           actionHover
+                            anchors.fill:  parent
+                            hoverEnabled:  true
+                            cursorShape:   Qt.PointingHandCursor
+                            onClicked:     card.actionInvoked(modelData.ref)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Hover tracking for card background color change
+        MouseArea {
+            id:                   cardHover
+            anchors.fill:          parent
+            hoverEnabled:          true
+            propagateComposedEvents: true
+        }
+    }
+}

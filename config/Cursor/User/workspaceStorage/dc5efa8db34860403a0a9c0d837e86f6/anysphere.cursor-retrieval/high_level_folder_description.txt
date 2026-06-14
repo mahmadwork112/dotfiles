@@ -1,1 +1,1 @@
-{"timestamp":1770391621738,"paths":["./project.godot","./.editorconfig","./main.tscn","./.gitattributes","./.gitignore","./World/Tileset Spring.png.import","./Player/ExamplePlayerSprite.png.import","./Player/player.gd.uid","./Player/player.tscn","./Player/player.gd"]}
+{"timestamp":1779439462955,"paths":["./.gitignore","./main.tscn","./.gitattributes","./project.godot","./.editorconfig","./World/Tileset Spring.png.import","./Player/ExamplePlayerSprite.png.import","./Player/player.gd.uid","./Player/player.tscn","./Player/player.gd"]}

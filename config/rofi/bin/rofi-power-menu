@@ -41,11 +41,27 @@ declare -A actions
 #actions[lockscreen]="loginctl lock-session ${XDG_SESSION_ID-}"
 actions[lockscreen]="hyprlock"
 #actions[switchuser]="???"
-actions[logout]="loginctl terminate-session ${XDG_SESSION_ID-}"
+actions[logout]="universal_logout"
 actions[suspend]="systemctl suspend"
 actions[hibernate]="systemctl hibernate"
 actions[reboot]="systemctl reboot"
 actions[shutdown]="systemctl poweroff"
+
+# Logout that works across compositors/display managers managed by logind.
+function universal_logout {
+  if [ -n "${XDG_SESSION_ID-}" ]; then
+    loginctl terminate-session "${XDG_SESSION_ID}"
+    return
+  fi
+
+  session_id="$(loginctl list-sessions --no-legend 2>/dev/null | awk -v user="$USER" '$3==user {print $1; exit}')"
+  if [ -n "$session_id" ]; then
+    loginctl terminate-session "$session_id"
+    return
+  fi
+
+  loginctl terminate-user "$USER"
+}
 
 # By default, ask for confirmation for actions that are irreversible
 confirmations=(reboot shutdown logout)

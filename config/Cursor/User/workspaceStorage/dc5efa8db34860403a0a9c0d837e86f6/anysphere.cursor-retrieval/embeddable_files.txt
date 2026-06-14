@@ -1,10 +1,10 @@
 project.godot
 .editorconfig
-World/Tileset Spring.png.import
 Player/ExamplePlayerSprite.png.import
-.gitattributes
-.gitignore
 Player/player.gd.uid
-Player/player.tscn
 Player/player.gd
+Player/player.tscn
 main.tscn
+World/Tileset Spring.png.import
+.gitignore
+.gitattributes

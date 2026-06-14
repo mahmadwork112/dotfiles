@@ -10,7 +10,7 @@ set +e
 /usr/lib/xdg-desktop-portal-wlr >/dev/null 2>&1 &
 
 # notify
-swaync -c ~/.config/swaync/config.jsonc -s ~/.config/swaync/style.css >/dev/null 2>&1 &
+# swaync -c ~/.config/swaync/config.jsonc -s ~/.config/swaync/style.css >/dev/null 2>&1 &
 
 # night light
 # wlsunset -T 3501 -t 3500 >/dev/null 2>&1 &

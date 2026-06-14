@@ -1,6 +1,6 @@
 [general]
 import = [
-  "~/.config/alacritty/dank-theme.toml"
+  "/home/ahmad/Downloads/alacritty_themes/moonfly-default.toml"
 ]
 
 [window]

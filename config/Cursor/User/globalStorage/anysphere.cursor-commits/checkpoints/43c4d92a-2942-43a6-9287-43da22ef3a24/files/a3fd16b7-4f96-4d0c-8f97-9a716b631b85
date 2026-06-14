@@ -1,0 +1,246 @@
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  ToastPopup.qml                                                  ║
+// ║  A single transient toast notification card                      ║
+// ║                                                                   ║
+// ║  Features:                                                        ║
+// ║    • Fades in when created                                        ║
+// ║    • Auto-dismiss timer (pauses on hover)                         ║
+// ║    • Critical notifications never auto-dismiss                    ║
+// ║    • Urgency color border                                         ║
+// ║    • App icon + app name + summary + body + action buttons        ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+Rectangle {
+    id: toast
+
+    // ── Props from shell.qml's Repeater ─────────────────────────────
+    required property var notifData   // one entry from popupStore.items
+    required property var themeObj    // theme QtObject from shell.qml
+
+    // ── Signals back to shell.qml ───────────────────────────────────
+    signal dismissRequested           // toast was closed
+    signal bodyClicked                // user clicked the toast body (open panel)
+
+    // ── Size ────────────────────────────────────────────────────────
+    width:  themeObj.popupWidth
+    height: toastLayout.implicitHeight + themeObj.padding * 2
+
+    radius: themeObj.cornerRadius
+    color:  themeObj.bgPanel
+
+    // Urgency-colored border
+    // TWEAK: Change `border.width` to 0 to remove the border entirely,
+    //        and rely only on the left bar for urgency indication.
+    border {
+        color: urgencyColor(notifData.urgency)
+        width: 1
+    }
+
+    function urgencyColor(u) {
+        if (u === 0) return themeObj.urgencyLow
+        if (u === 2) return themeObj.urgencyCritical
+        return themeObj.urgencyNormal
+    }
+
+    // ── Fade-in animation ────────────────────────────────────────────
+    opacity: 0
+    Component.onCompleted: {
+        fadeIn.start()
+        // Start the auto-dismiss timer (unless critical or duration = 0)
+        if (themeObj.popupDuration > 0 && notifData.urgency !== 2) {
+            dismissTimer.interval = notifData.expire > 0
+                ? notifData.expire
+                : themeObj.popupDuration
+            dismissTimer.start()
+        }
+        // TWEAK: To make ALL notifications auto-dismiss (including critical):
+        //   Remove the `notifData.urgency !== 2` condition above.
+    }
+
+    NumberAnimation {
+        id:       fadeIn
+        target:   toast
+        property: "opacity"
+        from:     0
+        to:       1
+        duration: themeObj.animToast
+        easing.type: Easing.OutCubic
+    }
+
+    // ── Auto-dismiss timer ───────────────────────────────────────────
+    // Pauses while the mouse is hovering over the toast.
+    Timer {
+        id:       dismissTimer
+        running:  false   // started in Component.onCompleted
+        repeat:   false
+        onTriggered: toast.dismissRequested()
+    }
+
+    // Pause timer on hover so users have time to read / click actions
+    onHoveredChanged: {
+        if (hovered) {
+            dismissTimer.stop()
+        } else {
+            // Resume with remaining time
+            // TWEAK: Remove this else block if you want the timer to NOT resume after hover
+            if (dismissTimer.interval > 0) dismissTimer.start()
+        }
+    }
+
+    property bool hovered: toastHover.containsMouse
+
+
+    // ── Left urgency bar ─────────────────────────────────────────────
+    Rectangle {
+        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+        width:  4
+        radius: 2
+        color:  urgencyColor(notifData.urgency)
+    }
+
+    // ── Toast content ────────────────────────────────────────────────
+    ColumnLayout {
+        id: toastLayout
+        anchors {
+            left:        parent.left
+            right:       parent.right
+            top:         parent.top
+            margins:     themeObj.padding
+            leftMargin:  themeObj.padding + 8   // indent past urgency bar
+        }
+        spacing: 4
+
+        // ── Top row: app icon + app name + close button ──────────
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 5
+
+            // App icon
+            // TWEAK: Remove this Image block to hide app icons on toasts
+            Image {
+                visible:    notifData.appIcon !== ""
+                source:     notifData.appIcon !== "" ? ("image://icon/" + notifData.appIcon) : ""
+                width:      16
+                height:     16
+                sourceSize: Qt.size(16, 16)
+                onStatusChanged: if (status === Image.Error) visible = false
+            }
+
+            Text {
+                text:  notifData.appName
+                color: themeObj.textSecondary
+                font {
+                    family:    themeObj.fontFamily
+                    pixelSize: themeObj.fontSmall
+                    weight:    Font.Medium
+                }
+                elide:            Text.ElideRight
+                Layout.fillWidth: true
+            }
+
+            // Close (✕) button
+            Text {
+                text:  "✕"
+                color: closeHover.containsMouse ? themeObj.urgencyCritical : themeObj.textDim
+                font.pixelSize: 11
+                Behavior on color { ColorAnimation { duration: 80 } }
+
+                MouseArea {
+                    id:           closeHover
+                    anchors.fill:  parent
+                    hoverEnabled:  true
+                    cursorShape:   Qt.PointingHandCursor
+                    onClicked:     toast.dismissRequested()
+                }
+            }
+        }
+
+        // ── Summary (bold title) ──────────────────────────────────
+        Text {
+            visible:          notifData.summary !== ""
+            text:             notifData.summary
+            color:            themeObj.textPrimary
+            font {
+                family:    themeObj.fontFamily
+                pixelSize: themeObj.fontNormal
+                weight:    Font.SemiBold
+            }
+            wrapMode:         Text.WordWrap
+            Layout.fillWidth: true
+            // TWEAK: increase to show more summary lines on toasts
+            maximumLineCount: 2
+            elide:            Text.ElideRight
+        }
+
+        // ── Body text ─────────────────────────────────────────────
+        Text {
+            visible:          notifData.body !== ""
+            text:             notifData.body
+            color:            themeObj.textSecondary
+            font { family: themeObj.fontFamily; pixelSize: themeObj.fontSmall }
+            wrapMode:         Text.WordWrap
+            Layout.fillWidth: true
+            // TWEAK: increase to show more body lines on toasts
+            maximumLineCount: 3
+            elide:            Text.ElideRight
+        }
+
+        // ── Action buttons ────────────────────────────────────────
+        // These appear below the body (e.g. "Reply", "Mark as read", "Skip").
+        // TWEAK: Remove this RowLayout block to hide actions on toasts entirely.
+        RowLayout {
+            visible:          notifData.actions.length > 0
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            spacing:          6
+
+            Repeater {
+                model: notifData.actions
+
+                delegate: Rectangle {
+                    required property var modelData
+
+                    height: 26
+                    width:  btnLabel.implicitWidth + 16
+                    radius: 5
+                    color:  btnHover.containsMouse ? themeObj.bgItemHover : themeObj.bgItem
+                    border { color: themeObj.borderColor; width: 1 }
+
+                    Text {
+                        id:              btnLabel
+                        anchors.centerIn: parent
+                        text:             modelData.text
+                        color:            themeObj.textPrimary
+                        font { family: themeObj.fontFamily; pixelSize: themeObj.fontSmall }
+                    }
+
+                    MouseArea {
+                        id:           btnHover
+                        anchors.fill:  parent
+                        hoverEnabled:  true
+                        cursorShape:   Qt.PointingHandCursor
+                        onClicked: {
+                            if (modelData.ref) modelData.ref.invoke()
+                            toast.dismissRequested()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ── Body click area ──────────────────────────────────────────────
+    // Clicking anywhere on the toast (not on a button) opens the panel.
+    // TWEAK: Remove this MouseArea if you don't want click-to-open-panel behavior.
+    MouseArea {
+        id:                    toastHover
+        anchors.fill:           parent
+        hoverEnabled:           true
+        propagateComposedEvents: true   // lets button MouseAreas still fire
+        onClicked:              toast.bodyClicked()
+    }
+}

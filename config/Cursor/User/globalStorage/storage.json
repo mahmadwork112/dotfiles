@@ -7,7 +7,10 @@
         "workspaces": [],
         "folders": [
             {
-                "folderUri": "file:///home/ahmad/Downloads/My_Game/first-game"
+                "folderUri": "file:///home/ahmad/.config/quickshell"
+            },
+            {
+                "folderUri": "file:///home/ahmad/.config/rofi"
             }
         ],
         "emptyWindows": []
@@ -15,23 +18,27 @@
     "windowControlHeight": 35,
     "profileAssociations": {
         "workspaces": {
-            "file:///home/ahmad/Downloads/My_Game/first-game": "__default__profile__"
+            "file:///home/ahmad/Downloads/My_Game/first-game": "__default__profile__",
+            "file:///home/ahmad/.config": "__default__profile__",
+            "file:///home/ahmad/.config/quickshell": "__default__profile__",
+            "file:///home/ahmad/.config/rofi": "__default__profile__"
         },
         "emptyWindows": {}
     },
     "windowsState": {
         "lastActiveWindow": {
-            "folder": "file:///home/ahmad/Downloads/My_Game/first-game",
-            "backupPath": "/home/ahmad/.config/Cursor/Backups/15d7caf8ec39bcb6890ba42db49d7579",
+            "folder": "file:///home/ahmad/.config/rofi",
+            "backupPath": "/home/ahmad/.config/Cursor/Backups/c4d48ffa6e7c216db7930a3e9ba46a6f",
             "uiState": {
                 "mode": 1,
                 "x": 0,
                 "y": 0,
-                "width": 1526,
-                "height": 810
+                "width": 1797,
+                "height": 1030
             }
         },
-        "openedWindows": []
+        "openedWindows": [],
+        "lastNonExtensionWindowWasOpenOnShutdown": false
     },
     "theme": "vs-dark",
     "themeBackground": "#181818",
@@ -52,12 +59,12 @@
             "statusBarNoFolderBackground": "#141414"
         },
         "layoutInfo": {
-            "sideBarSide": "right",
+            "sideBarSide": "left",
             "editorPartMinWidth": 220,
             "titleBarHeight": 35,
             "activityBarWidth": 0,
             "sideBarWidth": 214,
-            "auxiliarySideBarWidth": 1092,
+            "auxiliarySideBarWidth": 674,
             "statusBarHeight": 22,
             "windowBorder": false
         }
@@ -65,11 +72,20 @@
     "windowSplashWorkspaceOverride": {
         "layoutInfo": {
             "auxiliarySideBarWidth": [
-                1092,
+                674,
                 [
-                    "dc5efa8db34860403a0a9c0d837e86f6"
+                    "dc5efa8db34860403a0a9c0d837e86f6",
+                    "14765946c4363d6e72e5b6adb2a67cd5",
+                    "e6a0bf7c5b2806c8f9ab1935627dd618",
+                    "593d49ac2dc2a077081c54d9bb95f044"
                 ]
             ]
         }
+    },
+    "lifecycle.lastShutdownJoinerTimings": {
+        "extHostStarter": 2,
+        "instanceLockfile": 6,
+        "workspaceStorage": 16,
+        "applicationStorage": 18
     }
 }

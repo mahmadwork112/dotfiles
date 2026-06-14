@@ -1,2 +1,3 @@
-2026/02/04-02:26:01.436 b12b Creating DB /home/ahmad/.config/Cursor/Local Storage/leveldb since it was missing.
-2026/02/04-02:26:01.452 b12b Reusing MANIFEST /home/ahmad/.config/Cursor/Local Storage/leveldb/MANIFEST-000001
+2026/05/28-14:41:17.802 1ad7c Reusing MANIFEST /home/ahmad/.config/Cursor/Local Storage/leveldb/MANIFEST-000001
+2026/05/28-14:41:17.805 1ad7c Recovering log #3
+2026/05/28-14:41:17.805 1ad7c Reusing old log /home/ahmad/.config/Cursor/Local Storage/leveldb/000003.log 

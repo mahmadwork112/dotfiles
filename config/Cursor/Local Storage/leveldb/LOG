@@ -1,3 +1,3 @@
-2026/02/12-20:26:43.499 6282 Reusing MANIFEST /home/ahmad/.config/Cursor/Local Storage/leveldb/MANIFEST-000001
-2026/02/12-20:26:43.517 6282 Recovering log #3
-2026/02/12-20:26:43.517 6282 Reusing old log /home/ahmad/.config/Cursor/Local Storage/leveldb/000003.log 
+2026/05/28-15:13:21.860 20225 Reusing MANIFEST /home/ahmad/.config/Cursor/Local Storage/leveldb/MANIFEST-000001
+2026/05/28-15:13:21.864 20225 Recovering log #3
+2026/05/28-15:13:21.864 20225 Reusing old log /home/ahmad/.config/Cursor/Local Storage/leveldb/000003.log 
