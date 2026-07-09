@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DATA_DIR="/home/ahmad/.local/share/pipx/venvs/rofimoji/lib/python3.13/site-packages/picker/data"
+EMOJI_CACHE="/tmp/rofimoji-emoji-cache.txt"
+DELIM=$'\x02'
+
+build_cache() {
+    > "$EMOJI_CACHE"
+    for f in "$DATA_DIR"/emojis_*.csv; do
+        python3 -c "
+import sys
+with open('$f', 'r', encoding='utf-8') as fh:
+    for line in fh:
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split(' ', 1)
+        char = parts[0]
+        desc = parts[1] if len(parts) > 1 else ''
+        # strip HTML tags from description
+        while '<' in desc and '>' in desc:
+            start = desc.index('<')
+            end = desc.index('>') + 1
+            desc = desc[:start] + desc[end:]
+        print(f'{char}\x02{desc}\x00icon\x1f<span>{char}</span>')
+" 2>/dev/null
+    done > "$EMOJI_CACHE"
+}
+
+[[ ! -f "$EMOJI_CACHE" ]] && build_cache
+
+if [[ "${ROFI_RETV:-0}" -eq 0 ]]; then
+    printf '\0markup-rows\x1ftrue\n'
+    cat "$EMOJI_CACHE"
+else
+    selected="$1"
+    emoji="${selected%%$DELIM*}"
+    printf '%s' "$emoji" | wl-copy
+fi

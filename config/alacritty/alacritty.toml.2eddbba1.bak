@@ -34,7 +34,6 @@ bindings = [
   { key = "Minus",   mods = "Control",       action = "DecreaseFontSize" },
   { key = "Key0",    mods = "Control",       action = "ResetFontSize"    },
   { key = "Enter",   mods = "Shift",         chars = "\n" },
-  { key = "Return",  mods = "Shift",         chars = "\u001B\r" },
 ]
 
 [terminal]
@@ -49,4 +48,3 @@ style = "regular"
 [font.bold]
 family = "JetBrainsMono Nerd Font"
 style = "Bold"
-

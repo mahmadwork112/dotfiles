@@ -9,7 +9,7 @@
 
 /*****----- Configuration -----*****/
 configuration {
-  modi                                            : "drun,emoji-picker:/home/ahmad/.local/bin/rofimoji --use-icons --action clipboard,power-menu:~/.config/rofi/bin/rofi-power-menu,bw:~/.config/rofi/bin/bwmenu,wallpaper:~/.config/rofi/bin/wallpaper-picker";
+  modi                                            : "drun,emoji-picker:~/.config/rofi/bin/emoji-picker,power-menu:~/.config/rofi/bin/rofi-power-menu,bw:~/.config/rofi/bin/bwmenu,wallpaper:~/.config/rofi/bin/wallpaper-picker";
   disable-history                                 : false;
   icon-theme                                      : "pixora";
 /* 2. Optimized Display Strings */
@@ -29,4 +29,5 @@ configuration {
   kb-mode-last                                : "Ctrl+Shift+Tab";
 }
 
+@import "themes/emoji-picker.rasi"
 @theme "theme.rasi"

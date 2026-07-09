@@ -1,96 +1,56 @@
-/**
- * Dark Emoji Picker - Self Contained Grid
- * No external imports needed.
- */
-
-* {
-    /* Define Master Theme Variables Here */
-    bg-col:      #11111b; /* Deep Dark */
-    bg-alt:      #181825; /* Slightly lighter card background */
-    accent-col:  #89b4fa; /* Blue Accent */
-    text-col:    #cdd6f4;
-    text-alt:    #7f849c;
-    
-    font: "JetBrainsMono Nerd Font 12";
-    background-color: transparent;
+#emoji-picker window {
+    background-color:            #11111b;
+    border-color:                #89b4fa;
+    border-radius:               12px;
+    width:                       800px;
+    height:                      600px;
 }
 
-/* 1. The Main Window */
-window {
-    width: 800px;
-    height: 600px;
-    background-color: @bg-col; /* Explicitly set to fix the white background bug */
-    border: 2px;
-    border-color: @accent-col;
-    border-radius: 12px;
-    location: center;
-    anchor: center;
+#emoji-picker mainbox {
+    children:                    [ "inputbar", "listview" ];
 }
 
-/* 2. Main Container */
-mainbox {
-    background-color: @bg-col;
-    children: [ "inputbar", "listview" ];
+#emoji-picker inputbar {
+    background-color:            #181825;
+    border-radius:               10px 10px 0px 0px;
+    padding:                     15px;
+    children:                    [ "prompt", "entry" ];
 }
 
-/* 3. Search Bar Area */
-inputbar {
-    background-color: @bg-alt;
-    padding: 15px;
-    children: [ "prompt", "entry" ];
-    border-radius: 10px 10px 0px 0px;
+#emoji-picker prompt {
+    background-color:            #89b4fa;
+    text-color:                  #11111b;
+    padding:                     8px 15px;
+    border-radius:               6px;
 }
 
-prompt {
-    background-color: @accent-col;
-    text-color: @bg-col;
-    padding: 8px 15px;
-    border-radius: 6px;
+#emoji-picker entry {
+    placeholder:                 "Search emojis...";
+    placeholder-color:           #7f849c;
 }
 
-entry {
-    background-color: transparent;
-    text-color: @text-col;
-    padding: 8px;
-    placeholder: "Search emojis...";
-    placeholder-color: @text-alt;
+#emoji-picker listview {
+    columns:                     8;
+    lines:                       6;
+    spacing:                     12px;
+    padding:                     25px;
 }
 
-/* 4. The Grid */
-listview {
-    background-color: @bg-col;
-    columns: 8;            /* Adjust based on screen size */
-    lines: 6;
-    spacing: 12px;
-    padding: 25px;
-    fixed-height: true;
-    fixed-columns: true;
-    scrollbar: false;
+#emoji-picker element {
+    border-radius:               10px;
+    background-color:            #181825;
+    text-color:                  #cdd6f4;
 }
 
-/* 5. The Individual Emoji Box */
-element {
-    orientation: vertical;
-    padding: 10px;
-    border-radius: 10px;
-    background-color: @bg-alt; /* Creates the "tile" look */
-    text-color: @text-col;
+#emoji-picker element-icon {
+    size:                        56px;
 }
 
-/* 6. The Emoji (Icon) */
-element-icon {
-    size: 56px;            /* Scale the emoji glyph */
-    horizontal-align: 0.5;
-    vertical-align: 0.5;
+#emoji-picker element-text {
+    enabled:                     false;
 }
 
-/* 7. Hide text for a pure icon grid */
-element-text {
-    enabled: false; 
-}
-
-/* 8. Selection Highlight */
-element selected.normal {
-    background-color: @accent-col;
-    text-color: @bg-col;
+#emoji-picker element selected.normal {
+    background-color:            #89b4fa;
+    text-color:                  #11111b;
 }

@@ -159,3 +159,4 @@ element-text {
     expand:                      true;
     max-lines:                   1;
 }
+

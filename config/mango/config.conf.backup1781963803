@@ -150,5 +150,3 @@ source=~/.config/mango/rule.conf
 
 ### AutoStart servers
 exec-once = swayosd-server
-
-source=./dms/cursor.conf
