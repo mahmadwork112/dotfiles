@@ -1,401 +1,340 @@
-@define-color center-bg       rgba(8, 8, 11, 0.9);
-@define-color background      #08080b;
-@define-color text            #acb0d0;
-@define-color text-alt        #787c99;
-@define-color background-alt  #0e0e14;
-@define-color selected        alpha(@text-alt, .4);
-@define-color hover           alpha(@selected, .4);
-@define-color urgent          @text-alt;
+@import "colors/gruvbox-material.css";
 
-@keyframes slideIn {
-    from { opacity: 0; margin-top: -6px; }
-    to   { opacity: 1; margin-top: 0;    }
-}
-
-/* ── Global ──────────────────────────────────────────────── */
 * {
-    outline: none;
-    box-sizing: border-box;
+	all: unset;
+
+	/* Global style variables */
+	--border-radius: 16px;
+	--border-radius-s: 8px;
+	--border-radius-xl: 18px;
+
+	/* Shadows: set to none to disable */
+	--shadow: 2px 4px 10px rgba(0, 0, 0, 0.15);
+
+	font-family: "Geist", "JetBrainsMono Nerd Font Propo";
+	font-weight: 700;
 }
 
-/* ============================================================
-   THE CRITICAL FIX — STRIP ALL BACKGROUNDS FROM ANCESTORS
-   Every wrapper above .notification must be transparent or
-   the stacked-frame artifact appears (as seen in screenshot).
-   ============================================================ */
-
-/* Row container (GTK ListBoxRow) */
-.notification-row {
-    background: transparent;
-    padding: 0;
-    margin: 0;
+.notification {
+	padding: 5px;
 }
 
-/* EventBox wrapper — this is the one most GTK themes paint */
 .notification-background {
-    background: transparent;
+	background: @notification-bg;
+	border-radius: var(--border-radius);
+	margin: 8px;
+	padding: 0;
+	/* box-shadow: none; */
 }
 
-/* Floating window background layer */
-.floating-notifications.background {
-    background: transparent;
+.notification-background .close-button {
+	margin: 6px;
+	padding: 2px;
+	border-radius: 6px;
+	background: transparent;
+	color: @text;
 }
 
-/* ============================================================
-   FLOATING NOTIFICATIONS — the actual card
-   ============================================================ */
-
-.floating-notifications .notification-row .notification-background .notification {
-    background: alpha(@mycolor, 0.42);
-    border-radius: 14px;
-    margin: 6px;
-    animation: slideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
-
-    /* ── OUTERMOST SHADOW (floating popup) ──────────────────
-       Commented out per user request.
-       Uncomment to restore depth on floating toasts.
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.50),
-                0 1px 4px  rgba(0, 0, 0, 0.30);
-    ────────────────────────────────────────────────────── */
+.notification-background .close-button:hover {
+	background: @hover;
 }
 
-/* ============================================================
-   CONTROL CENTER NOTIFICATIONS — the actual card
-   ============================================================ */
-
-.control-center .notification-row .notification-background .notification {
-    background: alpha(@mycolor, 0.22);
-    border-radius: 12px;
-    margin-top: 5px;
-    margin-bottom: 2px;
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
-    /* ── OUTERMOST SHADOW (notification card in panel) ───────
-       Commented out per user request.
-       Uncomment to restore lift effect on cards.
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
-    ────────────────────────────────────────────────────── */
+.notification.critical {
+	border: 2px solid @urgent;
+	border-radius: var(--border-radius);
 }
 
-/* All inner widgets inherit border-radius so nothing pokes out */
-.notification box,
-.notification widget,
-.notification .notification-content {
-    border-radius: 12px;
-}
-
-/* Hover on action widgets */
-.notification widget:hover {
-    background: alpha(@mycolor, 0.15);
-    border-radius: 8px;
-    transition: background 0.2s ease;
-}
-
-/* ── Notification content padding ────────────────────────── */
 .notification-content {
-    padding: 8px 10px;
+	color: @text;
+	margin: 10px;
+	font-weight: 700;
 }
 
-/* ── Labels — low/normal urgency ─────────────────────────── */
-.notification.low .notification-content label,
-.notification.normal .notification-content label {
-    padding: 4px 8px 2px 8px;
-}
-
-/* ── App icons — always transparent bg ───────────────────── */
-.notification .notification-content image {
-    background-color: transparent;
-    border-radius: 6px;
-}
-
-/* ── Body text color ─────────────────────────────────────── */
-.notification.low .notification-content .body,
-.notification.normal .notification-content .body {
-    color: @text;
-}
-
-/* ── Critical urgency ────────────────────────────────────── */
-.notification.critical .notification-content {
-    background: rgba(200, 50, 40, 0.20);
-    border-radius: 12px;
-}
-
-.notification.critical .notification-content image {
-    background-color: transparent;
-}
-
-.notification.critical .notification-content label {
-    color: #ffb4a9;
-}
-
-/* ── Typography ──────────────────────────────────────────── */
-.notification-content .summary {
-    font-family: 'CodeNewRoman Nerd Font Propo', monospace;
-    font-size: 0.94rem;
-    font-weight: 600;
-    color: @text;
+.notification-content .text-box {
+	margin: 0 0 0 15px;
 }
 
 .notification-content .time {
-    font-size: 0.78rem;
-    font-weight: 400;
-    margin-right: 0.6rem;
-    color: alpha(@text, 0.55);
+	padding: 2px;
+	font-size: 0.95rem;
+	font-weight: 800;
+}
+
+.notification-content .summary {
+	font-size: 1rem;
+	font-weight: 800;
+	padding: 2px 0;
+	margin-bottom: 2px;
 }
 
 .notification-content .body {
-    font-family: 'CodeNewRoman Nerd Font Propo', monospace;
-    font-size: 0.875rem;
-    font-weight: 400;
-    margin-top: 0.2rem;
-    color: alpha(@text, 0.82);
+	color: @text-alt;
+	font-size: 0.8rem;
 }
 
-/* ── Close button ────────────────────────────────────────── */
-.close-button {
-    all: unset;
-    background: transparent;
-    border-radius: 50%;
-    color: alpha(@text, 0.45);
-    min-height: 20px;
-    min-width: 20px;
-    margin: 4px 4px 0 0;
-    /* transition intentionally NOT using `all` — avoids GTK
-       flash when `all: unset` is re-applied on hover state   */
-    transition: background 0.2s ease, color 0.2s ease;
+.notification-row .inline-reply-entry,
+.notification-row .inline-reply-button {
+	margin: 5px -5px -5px -5px;
+	padding: 10px 15px;
+	border-radius: var(--border-radius);
+	background: @background-alt;
 }
 
-.close-button:hover {
-    background: alpha(@mycolor, 0.30);
-    color: @text;
-    border-radius: 50%;
+.notification-row .inline-reply-entry {
+	margin-right: 10px;
 }
 
-/* ============================================================
-   CONTROL CENTER PANEL WINDOW
-   ============================================================ */
+.notification-row .inline-reply-button:hover {
+	background: @selected;
+}
+
+.notification-alt-actions {
+	padding: 5px 0;
+}
+
+.notification-action {
+	font-weight: 700;
+	border-radius: var(--border-radius);
+	background: @hover;
+	color: @text;
+	margin: 0 5px;
+	padding: 10px 0;
+}
+
+.notification-action:hover,
+.notification-action:active {
+	background: @selected;
+}
 
 .control-center {
-    background: @bg;
-    color: @text;
-    border-radius: 14px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, .4);
-    /* ── OUTERMOST SHADOW (entire panel window) ──────────────
-       Commented out per user request.
-       Uncomment to restore the panel drop-shadow.
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55),
-                1px 1px 5px rgba(0, 0, 0, 0.40);
-    ────────────────────────────────────────────────────── */
+	background: @center-bg;
+	border-radius: 0 0 var(--border-radius) var(--border-radius);
+	padding: 5px 5px 0 5px;
 }
 
-/* ── Panel title bar ─────────────────────────────────────── */
-.widget-title {
-    color: alpha(@text, 0.50);
-    padding: 14px 20px 6px 20px;
-    margin: 0;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+.control-center .notification-background {
+	background: @center-notification-bg;
+	box-shadow: var(--shadow);
 }
 
-/* "Clear all" / dismiss button */
-.widget-title > button {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: @text;
-    text-shadow: none;
-    background: alpha(#ff5555, 0.20);
-    border: 1px solid alpha(#ff5555, 0.28);
-    border-radius: 8px;
-    padding: 1px 10px;
-    margin-right: 14px;
-    margin-top: 2px;
-    transition: background 0.25s ease, border-color 0.25s ease;
-    box-shadow: none;
+/* Remove close buttons in notification center */
+.control-center .notification-background .close-button,
+.notification-group-close-button {
+	opacity: 0;
 }
 
-.widget-title > button:hover {
-    background: alpha(#ff5555, 0.38);
-    border-color: alpha(#ff5555, 0.50);
+.notification-group {
+	transition: 200ms;
 }
 
-/* ── Label widget ────────────────────────────────────────── */
-.widget-label {
-    margin: 4px 10px;
+/* Notifications expanded-group extra margin */
+.notification-group:not(.collapsed) {
+	margin: 8px;
 }
 
-.widget-label > label {
-    font-size: 0.95rem;
-    color: alpha(@text, 0.70);
+.notification-group-headers,
+.notification-group-buttons {
+	color: @text;
+	font-weight: bold;
+	background: @background;
+	border-radius: var(--border-radius);
+	padding: 4px 8px;
 }
 
-/* ============================================================
-   MPRIS WIDGET
-   ============================================================ */
-/* Make the inner player container fully transparent */
-.widget-mpris .widget-mpris-player {
-    background: transparent;
-    box-shadow: none;
-    border: none;
-    border-radius: 14px;
-    padding: 12px 14px;
-    margin: 6px 14px;
+.notification-group-headers>label {
+	margin: 0 3px;
+	font-size: 1rem;
 }
 
-.widget-mpris .widget-mpris-player * {
-    background: transparent;
-    box-shadow: none;
-    border: none;
+.notification-group-icon {
+	color: @text;
 }
 
-.widget-mpris .widget-mpris-album-art {
-    background: transparent;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.42);
-    border-radius: 10px;
+.notification-group-buttons .image-button {
+	background: transparent;
+	color: @text;
+	padding: 4px;
+	border-radius: var(--border-radius);
 }
 
-.widget-mpris .widget-mpris-player button {
-    background: transparent;
-    box-shadow: none;
-    border: none;
-    color: alpha(@text, 0.65);
-    border-radius: 10px;
-    padding: 5px 8px;
-    margin: 2px;
-    transition: background 0.18s ease, color 0.18s ease;
+.notification-group-buttons .image-button:hover {
+	background: @hover;
 }
 
-.widget-mpris .widget-mpris-player button:hover {
-    background: alpha(@mycolor, 0.18);
-    color: @text;
+/* Widgets */
+.widget {
+	margin: 5px;
+	color: @text;
 }
 
-.widget-mpris .widget-mpris-player .widget-mpris-title {
-    font-family: 'CodeNewRoman Nerd Font Propo', sans-serif;
-    font-weight: 700;
-    font-size: 0.98rem;
-    color: @text;
+.widget-mpris-album-art {
+	border-radius: var(--border-radius);
+	margin: 6px 4px;
 }
 
-.widget-mpris .widget-mpris-player .widget-mpris-subtitle {
-    font-size: 0.82rem;
-    color: alpha(@text, 0.60);
-    margin-top: 2px;
+.widget-mpris-title {
+	font-weight: 700;
+	font-size: 1.2rem;
+	margin: 0 3px;
 }
-/* ============================================================
-   BUTTONS GRID WIDGET
-   Selector path per swaync docs:
-   .widget-buttons-grid > flowbox > flowboxchild > button
-   ============================================================ */
+
+.widget-mpris-subtitle {
+	color: @text-alt;
+	font-weight: 700;
+	font-size: 0.9rem;
+	margin: 0 3px;
+}
+
+.mpris-background {
+	border-radius: 14px;
+	margin: 3px;
+}
+
+.widget-mpris {
+	border-radius: var(--border-radius);
+	box-shadow: var(--shadow);
+}
+
+.mpris-overlay {
+	border-radius: var(--border-radius);
+	padding: 10px;
+	background: @background;
+}
+
+/* Control buttons container  */
+.mpris-overlay>box:last-child {
+	border-radius: var(--border-radius-xl);
+	padding: 0 5px;
+	background: alpha(@hover, .6);
+}
+
+/* Control buttons */
+.widget-mpris-player button {
+	padding: 5px;
+	margin: 0 2.5px;
+}
+
+/* Hover for control buttons */
+.widget-mpris-player button:hover {
+	border-radius: var(--border-radius-s);
+	background: @hover;
+}
+
+/* Do not disturb */
+.widget-dnd {
+	padding: 10px 15px;
+	border-radius: var(--border-radius);
+	background: @background-alt;
+	box-shadow: var(--shadow);
+	color: @text;
+}
+
+.widget-dnd>label {
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+.widget-dnd switch {
+	background: @hover;
+	border-radius: var(--border-radius-s);
+	box-shadow: none;
+	padding: 2px;
+	transition: 200ms;
+}
+
+.widget-dnd switch slider {
+	background: @text;
+	border-radius: var(--border-radius-s);
+}
+
+.widget-dnd switch:hover,
+.widget-dnd switch:checked {
+	background-color: @selected;
+}
+
+.widget-notifications {
+	margin: 0;
+}
+
 .widget-buttons-grid {
-    font-family: 'CodeNewRoman Nerd Font Propo', monospace;
-    padding: 4px 8px 8px 8px;
-    margin: 2px 4px 4px 4px;
-    background: transparent;
+	border-radius: var(--border-radius);
+	padding: 5px 15px;
+	margin-bottom: 5px;
+	background: @background-alt;
+	box-shadow: var(--shadow);
 }
 
-.widget-buttons-grid > flowbox > flowboxchild {
-    all: unset;
-    padding: 3px;
+.widget-buttons-grid button {
+	padding: 10px;
+	margin: 3px;
+	min-width: 2rem;
+	background: @hover;
+	border-radius: var(--border-radius);
+	transition: 200ms;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild:focus,
-.widget-buttons-grid > flowbox > flowboxchild:focus-within,
-.widget-buttons-grid > flowbox > flowboxchild:selected {
-    all: unset;
-    padding: 3px;
+.widget-buttons-grid button>label {
+	font-family: "CaskaydiaCove Nerd Font Propo";
+	font-size: 16px;
+	color: @text;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button {
-    all: unset;
-    background: alpha(@background, 0.18);
-    border-radius: 12px;
-    min-width: 68px;
-    min-height: 44px;
-    padding: 0;
-    color: alpha(@text, 0.65);
-    font-size: 16px;
-    transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
-}
-.widget-buttons-grid > flowbox > flowboxchild > button label {
-    color: inherit;
-    font-size: 15px;
-    margin: 0 auto;
-    padding: 0;
-    transition: color 0.22s ease;
+.widget-buttons-grid button:hover {
+	background: @selected;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button:hover {
-    background: alpha(@color9, 0.18);
-    color: @text;
-    box-shadow: inset 0 0 10px alpha(@color9, 0.18);
+.widget-buttons-grid button:checked {
+	background-color: @text;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked,
-.widget-buttons-grid > flowbox > flowboxchild > button.toggle.active {
-    background: alpha(@color9, 0.48);
-    color: @background;
-    box-shadow: inset 0 0 14px alpha(@color9, 0.35), 0 0 8px alpha(@color9, 0.20);
+.widget-buttons-grid button:checked>label {
+	color: @background;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked label,
-.widget-buttons-grid > flowbox > flowboxchild > button.toggle.active label {
-    color: inherit;
-}
-
-.widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked:hover,
-.widget-buttons-grid > flowbox > flowboxchild > button.toggle.active:hover {
-    background: alpha(@color9, 0.58);
-    box-shadow: inset 0 0 16px alpha(@color9, 0.40), 0 0 10px alpha(@color9, 0.28);
-}
-/* ============================================================
-   SLIDERS — volume & backlight
-   GTK widget hierarchy: scale > trough > highlight
-                                        > slider
-   ============================================================ */
-
-scale trough {
-    border-radius: 20px;
-    background: alpha(@mycolor, 0.10);
-    border: 1px solid alpha(@mycolor, 0.08);
-    min-height: 4px;
-}
-
-scale trough highlight {
-    background: @mycolor;
-    border-radius: 20px;
-    min-height: 4px;
-    /* Soft glow on the filled portion */
-    box-shadow: 0 0 5px alpha(@mycolor, 0.40);
-    transition: box-shadow 0.25s ease;
-}
-
-scale trough highlight:hover {
-    box-shadow: 0 0 10px alpha(@mycolor, 0.65);
-}
-
-/* Knob hidden — renders as clean pill */
-scale trough slider {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    min-width: 0;
-    min-height: 0;
-}
-
-/* ── Volume widget ───────────────────────────────────────── */
-.widget-volume {
-    background: transparent;
-    padding: 6px 12px;
-    margin: 2px 8px;
-    border-radius: 10px;
-}
-
-/* ── Backlight widget ────────────────────────────────────── */
+.widget-volume,
 .widget-backlight {
-    background: transparent;
-    padding: 6px 12px;
-    margin: 2px 8px;
-    border-radius: 10px;
+	padding: 8px 14px;
+	margin: 5px 0;
+	border-radius: 12px;
+	color: @text;
+	font-weight: 800;
+	background: @background-alt;
+}
+
+.widget-volume label,
+.widget-backlight label {
+	font-size: 1.1rem;
+}
+
+.widget-volume slider,
+.widget-backlight slider {
+	border-radius: 24px;
+	margin: -8px;
+	background: @text;
+	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 4px 4px rgba(0, 0, 0, 0.4);
+	opacity: 1;
+}
+
+.widget-volume trough,
+.widget-backlight trough {
+	background: @hover;
+	margin-left: 8px;
+	border-radius: 12px;
+}
+
+.widget-volume highlight,
+.widget-backlight highlight {
+	padding: 3.5px;
+	border-radius: 12px;
+	background: @text;
+}
+
+/* Change color for placeholder when no notifications */
+.control-center-list-placeholder {
+	color: @text;
+}
+
+/* Avoid 'annoying' backgroud */
+.blank-window {
+	background: transparent;
 }
