@@ -1,0 +1,18 @@
+-------------------
+---- AUTOSTART ----
+-------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Autostart/
+
+-- Autostart necessary processes (like notifications daemons, status bars, etc.)
+-- Or execute your favorite apps at launch like this:
+--
+hl.on("hyprland.start", function()
+  hl.exec_cmd("waybar")
+  hl.exec_cmd("awww-daemon")
+  hl.exec_cmd("hyprctl setcursor Bibata-Modern-Amber 30")
+  hl.exec_cmd("/home/ahmad/.config/swaync/scripts/hover-trigger.sh")
+  hl.exec_cmd("qs -c overview")
+  hl.exec_cmd("/usr/libexec/hyprpolkitagent")
+  hl.exec_cmd("swayosd-server")
+end)

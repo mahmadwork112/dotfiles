@@ -1,75 +1,84 @@
-@import "colors/colors.css";
+@import "colors/gruvbox-material.css";
 
-/* 1. Global Reset - No backgrounds allowed by default */
 * {
-    border: none;
-    border-radius: 0;
-    font-family: "Pixelify Sans", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
-    font-size: 17px;
-    background: none; /* This kills the ghost squares */
-    margin: 0;
-    padding: 0;
+    all: unset;
+    font-family: "Iosevka Nerd Font Propo", monospace;
 }
 
-/* 2. Make the Waybar window and its main container invisible */
-window#waybar, 
-window#waybar > box {
-    background: transparent;
-    background-color: transparent;
+window#waybar {
+    background-color: @bg0;
+    color: @fg;
+    border-radius: 0 0 10px 10px;
 }
 
-/* 3. The Pills - These are the ONLY things that get a background */
-.modules-left,
-.modules-center,
+#workspaces {
+    min-width: 100px;
+    font-size: 0.4rem;
+    padding: 2px 4px;
+    margin: 11px 0;
+    border-radius: 99px;
+}
+
+#workspaces button {
+    background-color: @bg4;
+    color: transparent;
+    padding: 0px 5px;
+    border-radius: 99px;
+    margin: 0 2px;
+    min-width: 4px;
+}
+
+#workspaces button.active {
+    background-color: @blue;
+    min-width: 1.5rem;
+    transition: all 200ms ease-in-out;
+}
+
+#clock,
+#clock#right {
+    margin: 0 15px;
+    font-weight: 700;
+    font-size: 1.12rem;
+}
+
+#tray {
+    font-size: 1rem;
+    margin-left: 5px;
+}
+
+#custom-tray-menu {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: @blue;
+    padding: 0 6px;
+    transition: color 150ms ease-in-out;
+}
+
+#custom-tray-menu:hover {
+    color: @blue;
+}
+
+.modules-left {
+    margin-left: 12px;
+}
+
 .modules-right {
-    background: @bg0;
-    padding: 4px 12px;
-    border-radius: 28px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    /* margin adds air around the pill so it doesn't touch the window edge */
-    margin: 2px 0; 
+    margin-right: 12px;
 }
 
-/* 4. Workspaces & Tags (Resetting compositor defaults) */
-#workspaces, #tags, #dwl-tags {
-    background: transparent;
+#battery {
+    color: @green;
+    margin-left: 24px;
 }
 
-#workspaces button, #tags button {
-    padding: 0 8px;
-    margin: 2px;
-    color: @grey0;
-    transition: all 0.3s ease;
-    border-radius: 16px;
-    background: transparent;
+#network {
+    color: @purple;
 }
 
-/* The Active Gradient Pill */
-#workspaces button.active,
-#workspaces button.focused,
-#tags button.focused,
-#tags button.occupied {
-    background: linear-gradient(135deg, @blue 0%, @purple 50%, @red 100%);
-    color: @bg0;
-    min-width: 35px;
+#pulseaudio {
+    color: @yellow;
 }
 
-/* 5. Individual Module Colors */
-#custom-launcher { color: @fg; }
-#custom-home-folder { color: @blue; }
-#window, #dwl-window { color: @fg; font-weight: bold; }
-#custom-media { color: @aqua; }
-#clock { color: @fg; font-weight: bold; }
-#backlight, #pulseaudio { color: @yellow; }
-#network { color: @purple; }
-#battery { color: @green; }
-#custom-notification { color: @red; }
-#power-profiles-daemon { color: @aqua; }
-
-/* Tooltips */
-tooltip {
-    background: @bg2;
-    border: 1px solid @bg3;
-    border-radius: 12px;
+#backlight {
+    color: @aqua;
 }
-tooltip label { color: @fg; padding: 6px; }
