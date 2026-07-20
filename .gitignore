@@ -1,7 +1,27 @@
-#Ignore compiled Zsh files
+# Compiled files
 *.zwc
+*.pyc
+.DS_Store
 
-# Ignore general cache
-.cache/
-*.log
-node_modules/
+# Editor logs and caches
+**/config/Code/logs/
+**/config/Code/Session Storage/
+**/config/Code/Service Worker/
+**/config/Code/User/workspaceStorage/
+**/config/Code/Local Storage/
+**/config/Code/CachedProfilesData/
+
+**/config/Cursor/logs/
+**/config/Cursor/Session Storage/
+**/config/Cursor/Partitions/
+**/config/Cursor/process-monitor/
+**/config/Cursor/Local Storage/
+**/config/Cursor/CachedProfilesData/
+
+**/config/emacs/.local/state/
+**/config/emacs/.local/cache/
+
+# Additional editor cache and state directories
+**/config/emacs/.local/state/
+**/config/emacs/.local/cache/
+**/config/**/Shared Dictionary/cache/

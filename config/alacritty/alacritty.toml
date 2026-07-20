@@ -6,7 +6,8 @@ import = [
 [window]
 decorations = "None"
 padding = { x = 12, y = 12 }
-opacity = 1.0
+opacity = 0.5
+blur = true
 
 [scrolling]
 history = 3023
@@ -40,7 +41,7 @@ bindings = [
 [terminal]
 
 [terminal.shell]
-program = "/usr/bin/zsh"
+program = "/usr/bin/fish"
 
 [font.normal]
 family = "Iosevka"
@@ -49,4 +50,3 @@ style = "regular"
 [font.bold]
 family = "JetBrainsMono Nerd Font"
 style = "Bold"
-
