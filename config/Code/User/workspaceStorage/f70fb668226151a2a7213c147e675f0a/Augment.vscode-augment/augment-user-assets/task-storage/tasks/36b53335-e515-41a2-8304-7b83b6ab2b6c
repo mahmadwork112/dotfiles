@@ -1,9 +1,0 @@
-{
-  "uuid": "36b53335-e515-41a2-8304-7b83b6ab2b6c",
-  "name": "Current Task List",
-  "description": "Root task for conversation __NEW_AGENT__",
-  "state": "NOT_STARTED",
-  "subTasks": [],
-  "lastUpdated": 1771082024451,
-  "lastUpdatedBy": "USER"
-}

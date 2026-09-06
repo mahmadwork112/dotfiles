@@ -9,7 +9,10 @@ local menu = "./.config/rofi/app_launcher/launcher.sh"
 local powermenu = "./.config/rofi/powermenu/powermenu.sh"
 local wallpaper = "./.config/rofi/wallpaper_selector/wallpaper_selector.sh"
 local lockscreen = "playerctl --all-players pause; hyprlock"
-local browser = "/home/ahmad/.local/bin/zen"
+local emojiSelector = "/home/ahmad/.config/rofi/emoji_selector/emoji_selector.sh"
+local browser = "/usr/bin/floorp"
+-- local textEditor = terminal .. " --title zed-ide -e /home/ahmad/.local/bin/zed"
+local textEditor = "codium"
 
 ---------------------
 ---- KEYBINDINGS ----
@@ -18,19 +21,32 @@ local browser = "/home/ahmad/.local/bin/zen"
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Custom binds
+--emacs
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(textEditor))
 hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("qs ipc -c overview call overview toggle"))
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("mission-center"))
-hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("hyprctl dispatch overview:toggle"))
+hl.bind(
+	mainMod .. " + SHIFT + O",
+	hl.dsp.exec_cmd("/home/ahmad/Downloads/AppImages/Obsidian-1.12.7.AppImage --no-sandbox")
+)
+hl.bind(
+	"ALT + Tab",
+	hl.dsp.exec_cmd("snappy-switcher next --workspace --mod alt"),
+	{ description = "Snappy Switcher(Workspace)" }
+)
 hl.bind("PRINT", hl.dsp.exec_cmd("hyprshot -m region"))
 hl.bind(mainMod .. " + PRINT", hl.dsp.exec_cmd("hyprshot -m output"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + CTRL + W", hl.dsp.exec_cmd(wallpaper))
+hl.bind(mainMod .. " + CTRL + E", hl.dsp.exec_cmd(emojiSelector))
 hl.bind("ALT + CTRL + S", hl.dsp.exec_cmd("sh -c 'pkill waybar; waybar & pkill swaync; swaync'"))
 hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd(lockscreen))
 hl.bind(mainMod .. " + CTRL + X", hl.dsp.exec_cmd(powermenu))
 -- full screen and maximize commands
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized" }))
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
+-- mute the active window
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("qs -c muteWindow ipc call muteWindow toggle"))
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))

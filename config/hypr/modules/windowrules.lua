@@ -79,3 +79,13 @@ hl.window_rule({
 	float = true,
 	size = "800 500",
 })
+
+hl.window_rule({
+	name = "alacritty-nvim-maximized",
+	match = {
+		class = "^Alacritty$",
+		title = "^nvim-ide$",
+	},
+	float = true,
+	size = "1910 1040",
+})
